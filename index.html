@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>TimeGuesser — угадай место и год</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+        body {
+            background: #f0f2f5;
+            font-family: system-ui, 'Segoe UI', 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 12px;
+        }
+        .game {
+            max-width: 1300px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 2rem;
+            overflow: hidden;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            height: 95vh; /* используем почти всю высоту экрана, чтобы избежать лишнего скролла */
+        }
+        .main-view {
+            flex: 1;
+            min-height: 0; /* важно для корректного flex-сжатия */
+            background: #e9ecef;
+            overflow: hidden;
+            position: relative;
+        }
+        .view-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        .view {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: opacity 0.2s ease;
+        }
+        .view-hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+            background: #d4dce0;
+        }
+        .image-wrapper {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+            background: #e9ecef;
+            touch-action: none;
+            cursor: grab;
+        }
+        .image-wrapper:active {
+            cursor: grabbing;
+        }
+        .historical-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-origin: 0 0;
+            will-change: transform;
+            pointer-events: none;
+        }
+        .zoom-buttons {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            display: flex;
+            gap: 8px;
+            background: rgba(0,0,0,0.6);
+            border-radius: 40px;
+            padding: 6px 12px;
+            backdrop-filter: blur(4px);
+            z-index: 10;
+        }
+        .zoom-btn {
+            background: #ff8c42;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.1s;
+        }
+        .zoom-btn:active {
+            transform: scale(0.95);
+        }
+        .switch-btn {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            width: 48px;
+            height: 48px;
+            background: rgba(0,0,0,0.6);
+            border-radius: 12px;
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            border: 1px solid #ff8c42;
+            transition: 0.1s;
+        }
+        .switch-btn:active {
+            transform: scale(0.95);
+        }
+        .switch-icon {
+            font-size: 24px;
+        }
+        .info-block {
+            background: #f8f9fa;
+            margin: 8px 12px 0 12px;
+            padding: 8px 12px;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            text-align: center;
+            border: 1px solid #dee2e6;
+            color: #212529;
+            line-height: 1.4;
+        }
+        .control-panel {
+            background: #ffffff;
+            padding: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            border-top: 1px solid #dee2e6;
+        }
+        .year-slider-area {
+            flex: 2;
+            min-width: 150px;
+            background: #f8f9fa;
+            padding: 0.4rem 0.8rem;
+            border-radius: 2rem;
+            border: 1px solid #dee2e6;
+        }
+        .year-label {
+            font-size: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            color: #212529;
+        }
+        input[type="range"] {
+            width: 100%;
+        }
+        .selected-info {
+            flex: 2;
+            background: #f8f9fa;
+            border-radius: 2rem;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+            color: #212529;
+            border: 1px solid #dee2e6;
+        }
+        .total-score-area {
+            flex: 1;
+            background: #f8f9fa;
+            border-radius: 2rem;
+            padding: 0.4rem 0.8rem;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.75rem;
+            color: #212529;
+            border: 1px solid #dee2e6;
+        }
+        .check-btn {
+            flex: 1;
+            background: #ff8c42;
+            border: none;
+            padding: 0.6rem;
+            border-radius: 3rem;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: white;
+            text-align: center;
+            transition: 0.1s;
+        }
+        .check-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        @media (max-width: 700px) {
+            .control-panel { flex-direction: row; flex-wrap: wrap; gap: 8px; }
+            .year-slider-area, .selected-info, .total-score-area, .check-btn {
+                flex: 1 1 auto;
+                min-width: 120px;
+            }
+            .info-block { margin: 6px 8px 0 8px; padding: 6px 10px; font-size: 0.8rem; }
+        }
+        .leaflet-control-attribution { display: none; }
+        .green-marker, .custom-div-icon {
+            background: none;
+            border: none;
+            font-size: 26px;
+            text-shadow: 0 0 2px black;
+        }
+    </style>
+</head>
+<body>
+<div class="game">
+    <div class="main-view">
+        <div class="view-container">
+            <div id="mapView" class="view"></div>
+            <div id="imageView" class="view view-hidden">
+                <div class="image-wrapper" id="imageWrapper">
+                    <img id="historicalImage" class="historical-img" src="" alt="Историческое фото">
+                </div>
+                <div class="zoom-buttons">
+                    <button class="zoom-btn" id="zoomOut">−</button>
+                    <button class="zoom-btn" id="zoomIn">+</button>
+                </div>
+            </div>
+            <div class="switch-btn" id="switchViewBtn">
+                <span class="switch-icon" id="switchIcon">🗺️</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-block" id="infoBlock">
+        📍 Нажми на карту, чтобы выбрать место, и выбери год на ползунке
+    </div>
+
+    <div class="control-panel">
+        <div class="year-slider-area">
+            <div class="year-label">
+                <span>🗓️ ГОД</span>
+                <span id="yearValueDisplay">1950</span>
+            </div>
+            <input type="range" id="yearSlider" min="1850" max="2024" step="1" value="1950">
+        </div>
+        <div class="selected-info">
+            <div>📍 Место: <span id="coordsDisplay">—</span></div>
+            <div>🎯 Очки: <strong id="lastPoints">—</strong></div>
+        </div>
+        <div class="total-score-area">
+            🏆 <span id="totalScore">0</span>
+        </div>
+        <button id="checkBtn" class="check-btn">✅ ПРОВЕРИТЬ</button>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const QUESTIONS = [
+            { imageUrl: "img/red_square.jpg", correctLat: 55.7537, correctLng: 37.6199, correctYear: 1905, description: "Красная площадь, Москва, начало XX века" },
+            { imageUrl: "img/nevsky.jpg", correctLat: 59.9343, correctLng: 30.3061, correctYear: 1910, description: "Невский проспект, Санкт-Петербург, 1910-е" },
+            { imageUrl: "img/vladivostok_station.jpg", correctLat: 43.1155, correctLng: 131.8855, correctYear: 1995, description: "Железнодорожный вокзал Владивостока" },
+            { imageUrl: "img/baikal.jpg", correctLat: 53.5, correctLng: 107.5, correctYear: 1980, description: "Озеро Байкал" },
+            { imageUrl: "img/catherine_palace.jpg", correctLat: 59.7167, correctLng: 30.3964, correctYear: 1912, description: "Царское Село, Екатерининский дворец" }
+        ];
+
+        const yearSlider = document.getElementById('yearSlider');
+        const yearValueDisplay = document.getElementById('yearValueDisplay');
+        const checkBtn = document.getElementById('checkBtn');
+        const totalScoreSpan = document.getElementById('totalScore');
+        const lastPointsSpan = document.getElementById('lastPoints');
+        const coordsDisplay = document.getElementById('coordsDisplay');
+        const historicalImg = document.getElementById('historicalImage');
+        const switchViewBtn = document.getElementById('switchViewBtn');
+        const mapView = document.getElementById('mapView');
+        const imageView = document.getElementById('imageView');
+        const infoBlock = document.getElementById('infoBlock');
+        const zoomInBtn = document.getElementById('zoomIn');
+        const zoomOutBtn = document.getElementById('zoomOut');
+        const imageWrapper = document.getElementById('imageWrapper');
+
+        let currentIndex = 0;
+        let userMarker = null, correctMarker = null, distanceLine = null;
+        let selectedLat = null, selectedLng = null;
+        let selectedYear = 1950;
+        let totalPoints = 0;
+        let questionAnswered = false;
+        let map = null;
+        let currentView = 'image';
+
+        // --- Управление изображением ---
+        let imgW = 0, imgH = 0;
+        let scale = 1, translateX = 0, translateY = 0;
+        let drag = false, dragStartX = 0, dragStartY = 0, dragStartTranslateX = 0, dragStartTranslateY = 0;
+
+        function updateTransform() {
+            historicalImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+        }
+
+        function applyBounds() {
+            if (imgW === 0) return;
+            const rect = imageWrapper.getBoundingClientRect();
+            const imgW_scaled = imgW * scale;
+            const imgH_scaled = imgH * scale;
+            const maxX = Math.max(0, (imgW_scaled - rect.width) / 2);
+            const maxY = Math.max(0, (imgH_scaled - rect.height) / 2);
+            translateX = Math.min(maxX, Math.max(-maxX, translateX));
+            translateY = Math.min(maxY, Math.max(-maxY, translateY));
+            updateTransform();
+        }
+
+        function resetImage() {
+            if (imgW === 0 || imgH === 0) return;
+            const rect = imageWrapper.getBoundingClientRect();
+            if (rect.width === 0 || rect.height === 0) return;
+            scale = Math.min(rect.width / imgW, rect.height / imgH);
+            translateX = (rect.width - imgW * scale) / 2;
+            translateY = (rect.height - imgH * scale) / 2;
+            updateTransform();
+        }
+
+        function setZoom(delta, clientX, clientY) {
+            if (imgW === 0) return;
+            const rect = imageWrapper.getBoundingClientRect();
+            const oldScale = scale;
+            let newScale = scale + delta;
+            newScale = Math.min(3, Math.max(0.3, newScale));
+            if (newScale === oldScale) return;
+            const cx = clientX - rect.left;
+            const cy = clientY - rect.top;
+            const oldX = (cx - translateX) / oldScale;
+            const oldY = (cy - translateY) / oldScale;
+            scale = newScale;
+            translateX = cx - oldX * scale;
+            translateY = cy - oldY * scale;
+            applyBounds();
+        }
+
+        function loadImage() {
+            const q = QUESTIONS[currentIndex];
+            const img = new Image();
+            img.onload = () => {
+                imgW = img.width;
+                imgH = img.height;
+                historicalImg.src = q.imageUrl;
+                historicalImg.style.width = `${imgW}px`;
+                historicalImg.style.height = `${imgH}px`;
+                resetImage();
+            };
+            img.onerror = () => {
+                imgW = 400; imgH = 260;
+                historicalImg.src = `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260"><rect width="100%" height="100%" fill="#6c757d"/><text x="200" y="130" text-anchor="middle" fill="white" font-size="18">Не загружено</text><text x="200" y="170" text-anchor="middle" fill="#f8f9fa" font-size="14">${q.description}</text></svg>`)}`;
+                historicalImg.style.width = '400px';
+                historicalImg.style.height = '260px';
+                resetImage();
+            };
+            img.src = q.imageUrl;
+        }
+
+        // --- Мышь ---
+        function onMouseDown(e) {
+            if (currentView !== 'image') return;
+            e.preventDefault();
+            drag = true;
+            dragStartX = e.clientX;
+            dragStartY = e.clientY;
+            dragStartTranslateX = translateX;
+            dragStartTranslateY = translateY;
+            imageWrapper.style.cursor = 'grabbing';
+        }
+        function onMouseMove(e) {
+            if (!drag || currentView !== 'image') return;
+            e.preventDefault();
+            translateX = dragStartTranslateX + (e.clientX - dragStartX);
+            translateY = dragStartTranslateY + (e.clientY - dragStartY);
+            applyBounds();
+        }
+        function onMouseUp() {
+            drag = false;
+            imageWrapper.style.cursor = 'grab';
+        }
+        function onWheel(e) {
+            if (currentView !== 'image') return;
+            e.preventDefault();
+            setZoom(e.deltaY > 0 ? -0.1 : 0.1, e.clientX, e.clientY);
+        }
+
+        // --- Тач ---
+        let touchData = { scale: 1, dist: 0, active: false, startTranslateX: 0, startTranslateY: 0 };
+        function onTouchStart(e) {
+            if (currentView !== 'image') return;
+            const touches = e.touches;
+            if (touches.length === 1) {
+                touchData.active = true;
+                touchData.startX = touches[0].clientX;
+                touchData.startY = touches[0].clientY;
+                touchData.startTranslateX = translateX;
+                touchData.startTranslateY = translateY;
+                e.preventDefault();
+            } else if (touches.length === 2) {
+                const dx = touches[0].clientX - touches[1].clientX;
+                const dy = touches[0].clientY - touches[1].clientY;
+                touchData.dist = Math.hypot(dx, dy);
+                touchData.scale = scale;
+                touchData.active = true;
+                e.preventDefault();
+            }
+        }
+        function onTouchMove(e) {
+            if (currentView !== 'image') return;
+            const touches = e.touches;
+            if (touches.length === 1 && touchData.active && !touchData.dist) {
+                const dx = touches[0].clientX - touchData.startX;
+                const dy = touches[0].clientY - touchData.startY;
+                translateX = touchData.startTranslateX + dx;
+                translateY = touchData.startTranslateY + dy;
+                applyBounds();
+                e.preventDefault();
+            } else if (touches.length === 2 && touchData.dist) {
+                const dx = touches[0].clientX - touches[1].clientX;
+                const dy = touches[0].clientY - touches[1].clientY;
+                const newDist = Math.hypot(dx, dy);
+                const delta = (newDist / touchData.dist) * touchData.scale - scale;
+                const centerX = (touches[0].clientX + touches[1].clientX) / 2;
+                const centerY = (touches[0].clientY + touches[1].clientY) / 2;
+                setZoom(delta, centerX, centerY);
+                e.preventDefault();
+            }
+        }
+        function onTouchEnd() {
+            touchData = { scale: 1, dist: 0, active: false, startTranslateX: 0, startTranslateY: 0 };
+        }
+
+        // --- Карта ---
+        function initMap() {
+            map = L.map(mapView).setView([62.0, 95.0], 4);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '', maxZoom: 18, minZoom: 3 }).addTo(map);
+            map.attributionControl = null;
+            const bounds = L.latLngBounds([41.0, 19.0], [82.0, 190.0]);
+            map.setMaxBounds(bounds);
+            map.on('move', () => map.panInsideBounds(bounds, { animate: false }));
+            map.on('click', (e) => {
+                if (questionAnswered) {
+                    setInfo("⚠️ Вопрос уже проверен! Нажмите «Следующий».", 3000);
+                    return;
+                }
+                selectedLat = e.latlng.lat;
+                selectedLng = e.latlng.lng;
+                coordsDisplay.innerText = `${selectedLat.toFixed(2)}°, ${selectedLng.toFixed(2)}°`;
+                if (userMarker) map.removeLayer(userMarker);
+                userMarker = L.marker([selectedLat, selectedLng], { icon: L.divIcon({ className: 'custom-div-icon', html: '🔵', iconSize: [20,20] }) }).addTo(map);
+                userMarker.bindPopup(`📍 Ваш выбор`).openPopup();
+                setInfo(`✅ Место выбрано: ${selectedLat.toFixed(2)}°, ${selectedLng.toFixed(2)}°`, 2000);
+            });
+        }
+
+        let infoTimeout;
+        function setInfo(msg, dur = 3000) {
+            clearTimeout(infoTimeout);
+            infoBlock.innerHTML = msg;
+            infoTimeout = setTimeout(() => {
+                if (!questionAnswered) infoBlock.innerHTML = "📍 Нажми на карту, чтобы выбрать место, и выбери год на ползунке";
+            }, dur);
+        }
+
+        function switchView() {
+            if (currentView === 'image') {
+                mapView.classList.remove('view-hidden');
+                imageView.classList.add('view-hidden');
+                currentView = 'map';
+                document.getElementById('switchIcon').innerHTML = '🖼️';
+                setTimeout(() => map.invalidateSize(), 50);
+            } else {
+                mapView.classList.add('view-hidden');
+                imageView.classList.remove('view-hidden');
+                currentView = 'image';
+                document.getElementById('switchIcon').innerHTML = '🗺️';
+                resetImage();
+            }
+        }
+
+        function zoomImage(delta) {
+            if (currentView !== 'image') return;
+            const rect = imageWrapper.getBoundingClientRect();
+            setZoom(delta, rect.left + rect.width/2, rect.top + rect.height/2);
+        }
+
+        // --- Игровая логика ---
+        function getDistance(lat1, lng1, lat2, lng2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI/180;
+            const dLng = (lng2 - lng1) * Math.PI/180;
+            const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        }
+        function calcPoints(ul, uLng, uYear, cl, cLng, cYear) {
+            const dist = getDistance(ul, uLng, cl, cLng);
+            const ydiff = Math.abs(uYear - cYear);
+            const pDist = Math.max(0, 100 * (1 - Math.min(1, dist/2000)));
+            const pYear = Math.max(0, 100 * (1 - Math.min(1, ydiff/80)));
+            return { final: Math.round((pDist+pYear)/2*100)/100, dist, ydiff };
+        }
+
+        function drawLineAndZoom(ul, ulng, cl, clng) {
+            if (distanceLine) map.removeLayer(distanceLine);
+            distanceLine = L.polyline([[ul, ulng], [cl, clng]], { color: '#ff8c42', weight: 3, dashArray: '8,8' }).addTo(map);
+            map.fitBounds(L.latLngBounds([ul, ulng], [cl, clng]), { padding: [70,70] });
+        }
+
+        function loadQuestion() {
+            questionAnswered = false;
+            checkBtn.disabled = false;
+            checkBtn.innerText = "✅ ПРОВЕРИТЬ";
+            checkBtn.onclick = handleCheck;
+            infoBlock.innerHTML = "📍 Нажми на карту, чтобы выбрать место, и выбери год на ползунке";
+            if (userMarker) map.removeLayer(userMarker);
+            if (correctMarker) map.removeLayer(correctMarker);
+            if (distanceLine) map.removeLayer(distanceLine);
+            userMarker = correctMarker = distanceLine = null;
+            selectedLat = selectedLng = null;
+            coordsDisplay.innerText = '—';
+            lastPointsSpan.innerText = '—';
+            const q = QUESTIONS[currentIndex];
+            const randYear = Math.floor(Math.random() * (2024-1850+1)) + 1850;
+            yearSlider.value = randYear;
+            selectedYear = randYear;
+            yearValueDisplay.innerText = randYear;
+            loadImage();
+        }
+
+        function updateYear() {
+            selectedYear = parseInt(yearSlider.value);
+            yearValueDisplay.innerText = selectedYear;
+        }
+        yearSlider.addEventListener('input', () => {
+            if (questionAnswered) {
+                setInfo("⚠️ Вопрос уже проверен, изменить год нельзя.", 2000);
+                yearSlider.value = selectedYear;
+                return;
+            }
+            updateYear();
+        });
+
+        function handleCheck() {
+            if (questionAnswered) {
+                setInfo("❗ Ты уже получил очки. Нажми «Следующий».", 3000);
+                return;
+            }
+            if (selectedLat === null) {
+                setInfo("⚠️ Сначала выбери место на карте!", 3000);
+                return;
+            }
+            checkBtn.disabled = true;
+            const q = QUESTIONS[currentIndex];
+            const res = calcPoints(selectedLat, selectedLng, selectedYear, q.correctLat, q.correctLng, q.correctYear);
+            totalPoints += res.final;
+            totalScoreSpan.innerText = Math.floor(totalPoints*100)/100;
+            lastPointsSpan.innerText = res.final.toFixed(1);
+            infoBlock.innerHTML = `✅ <strong>Правильный ответ:</strong> ${q.description}<br>📍 Координаты: ${q.correctLat.toFixed(2)}°, ${q.correctLng.toFixed(2)}°<br>🗓️ Год: ${q.correctYear}<br>📏 Ваше расстояние: ${res.dist.toFixed(1)} км`;
+            if (correctMarker) map.removeLayer(correctMarker);
+            correctMarker = L.marker([q.correctLat, q.correctLng], { icon: L.divIcon({ className: 'green-marker', html: '🟢', iconSize: [22,22] }) }).addTo(map);
+            correctMarker.bindPopup(`✅ Правильное место (год ${q.correctYear})`).openPopup();
+            drawLineAndZoom(selectedLat, selectedLng, q.correctLat, q.correctLng);
+            if (userMarker) userMarker.bindPopup(`📍 Ваш выбор (${selectedYear} г.)<br>Расстояние: ${res.dist.toFixed(1)} км`).openPopup();
+            questionAnswered = true;
+            if (currentIndex+1 < QUESTIONS.length) {
+                checkBtn.innerText = "➡️ СЛЕДУЮЩИЙ ВОПРОС";
+                checkBtn.disabled = false;
+                checkBtn.onclick = () => {
+                    if (!questionAnswered) return;
+                    if (currentView === 'map') switchView();
+                    currentIndex++;
+                    loadQuestion();
+                };
+            } else {
+                checkBtn.innerText = "🏁 ФИНИШ";
+                checkBtn.disabled = false;
+                checkBtn.onclick = () => {
+                    setInfo(`Игра завершена! Счёт: ${Math.floor(totalPoints*100)/100} из ${QUESTIONS.length*100}`, 5000);
+                    checkBtn.disabled = true;
+                };
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            if (currentView === 'image') resetImage();
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initMap();
+            totalScoreSpan.innerText = "0";
+            loadQuestion();
+
+            switchViewBtn.addEventListener('click', switchView);
+            zoomInBtn.addEventListener('click', () => zoomImage(0.2));
+            zoomOutBtn.addEventListener('click', () => zoomImage(-0.2));
+
+            imageWrapper.addEventListener('mousedown', onMouseDown);
+            window.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('mouseup', onMouseUp);
+            imageWrapper.addEventListener('wheel', onWheel, { passive: false });
+            imageWrapper.style.cursor = 'grab';
+
+            imageWrapper.addEventListener('touchstart', onTouchStart, { passive: false });
+            imageWrapper.addEventListener('touchmove', onTouchMove, { passive: false });
+            imageWrapper.addEventListener('touchend', onTouchEnd);
+            imageWrapper.addEventListener('touchcancel', onTouchEnd);
+
+            mapView.classList.add('view-hidden');
+            imageView.classList.remove('view-hidden');
+            currentView = 'image';
+            document.getElementById('switchIcon').innerHTML = '🗺️';
+            setTimeout(() => map.invalidateSize(), 100);
+        });
+    })();
+</script>
+</body>
+</html>
