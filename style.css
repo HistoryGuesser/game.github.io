@@ -67,9 +67,13 @@ body {
 /* --- Игровой экран --- */
 .game-screen {
     position: relative;
-    overflow-y: auto; /* позволяет прокручивать, если содержимого много, но обычно не нужно */
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* занимает всю высоту родителя */
+    overflow: hidden;
 }
 .game-header {
+    flex-shrink: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -77,24 +81,8 @@ body {
     border-bottom: 1px solid #dee2e6;
     background: #ffffff;
 }
-.back-btn {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    padding: 6px 12px;
-    border-radius: 30px;
-    font-size: 0.8rem;
-    cursor: pointer;
-    font-weight: 500;
-}
-.game-title {
-    font-size: 1.3rem;
-    font-weight: bold;
-    background: linear-gradient(135deg, #ff8c42, #e0692c);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-}
 .info-block {
+    flex-shrink: 0;
     background: #f8f9fa;
     margin: 8px 12px 0 12px;
     padding: 8px 12px;
@@ -106,14 +94,22 @@ body {
     line-height: 1.4;
 }
 .main-view {
-    flex: 0 1 auto;
-    max-height: 65vh;
-    min-height: 300px;
+    flex: 4; /* занимает 4 части из 5 (80% оставшегося пространства) */
+    min-height: 0; /* важно для корректного flex-сжатия */
     background: #e9ecef;
     overflow: hidden;
     position: relative;
     margin: 8px 12px;
     border-radius: 1rem;
+}
+.control-bar {
+    flex-shrink: 0; /* не сжимается, занимает только естественную высоту */
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #ffffff;
+    border-top: 1px solid #dee2e6;
 }
 .view-container {
     position: relative;
