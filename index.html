@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TimeGuesser — угадай место и год</title>
+    <title>HistoryGuesser — угадай место и год</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%231e3a8a'/%3E%3Ctext x='50' y='68' font-size='48' text-anchor='middle' fill='white' font-family='monospace'%3E⏳%3C/text%3E%3C/svg%3E">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -16,23 +16,23 @@
         html, body {
             height: 100%;
             background: #f0f4f8;
-            font-family: 'Inter', system-ui, 'Segoe UI', 'Roboto', sans-serif;
+            font-family: 'Manrope', system-ui, 'Segoe UI', 'Roboto', sans-serif;
         }
         body {
             display: flex;
             justify-content: center;
-            align-items: center;
-            padding: 16px;
+            align-items: stretch;
+            padding: 0;
         }
         .screen {
             width: 100%;
-            max-width: 1300px;
+            max-width: none;
             background: #ffffff;
-            border-radius: 2rem;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+            border-radius: 0;
+            box-shadow: none;
             display: flex;
             flex-direction: column;
-            height: 95vh;
+            height: 100vh;
             overflow: hidden;
             position: relative;
         }
@@ -192,6 +192,22 @@
             border-bottom: 1px solid #e2e8f0;
             background: #ffffff;
         }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .round-badge {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #0f1f4a;
+            background: #eef2ff;
+            border-radius: 10px;
+            padding: 6px 10px;
+        }
+        .header-spacer {
+            width: 54px;
+        }
         .back-btn {
             background: #f1f5f9;
             border: 1px solid #cbd5e1;
@@ -215,25 +231,31 @@
         }
         .info-block {
             flex-shrink: 0;
-            background: #f8fafc;
-            margin: 12px 16px 0 16px;
-            padding: 14px 20px;
-            border-radius: 1rem;
+            background: transparent;
+            margin: 8px 16px 0;
+            padding: 0 2px;
             font-size: 1rem;
-            text-align: center;
-            border: 1px solid #e2e8f0;
+            text-align: left;
+            border: none;
             color: #1f2937;
             line-height: 1.5;
             font-weight: 500;
             width: calc(100% - 32px);
         }
+        .gameplay-layout {
+            flex: 1;
+            min-height: 0;
+            display: grid;
+            grid-template-columns: 1fr;
+        }
         .main-area {
             flex: 1;
             min-height: 0;
-            margin: 12px 16px;
-            border-radius: 1rem;
+            margin: 12px 16px 8px;
+            border-radius: 1.2rem;
             overflow: hidden;
             position: relative;
+            border: 1px solid #dbe3ef;
         }
         .view-container {
             width: 100%;
@@ -324,7 +346,7 @@
             max-width: none;
         }
         .historical-bg {
-            transform-origin: center center;
+            transform-origin: 0 0;
             opacity: 0.35;
             filter: brightness(0.7) saturate(0.9) blur(0.6px);
         }
@@ -374,10 +396,10 @@
             position: absolute;
             bottom: 16px;
             right: 16px;
-            width: 48px;
-            height: 48px;
+            width: 62px;
+            height: 62px;
             background: rgba(0,0,0,0.6);
-            border-radius: 12px;
+            border-radius: 14px;
             backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
@@ -387,21 +409,24 @@
             border: 1px solid #1e3a8a;
             transition: 0.1s;
         }
+        .switch-btn.dragging {
+            cursor: grabbing;
+        }
         .switch-btn:active {
             transform: scale(0.95);
         }
         .switch-icon {
-            font-size: 24px;
+            font-size: 30px;
         }
         .selected-info {
             position: absolute;
             top: 12px;
-            left: 12px;
+            right: 12px;
             background: rgba(0,0,0,0.7);
             backdrop-filter: blur(8px);
             border-radius: 20px;
             padding: 6px 12px;
-            font-size: 12px;
+            font-size: 14px;
             color: white;
             z-index: 10;
             pointer-events: none;
@@ -424,25 +449,24 @@
         }
         .control-bar {
             flex-shrink: 0;
-            padding: 12px 16px;
+            padding: 8px 16px 16px;
             display: flex;
             flex-direction: column;
             gap: 12px;
             background: #ffffff;
-            border-top: 1px solid #e2e8f0;
         }
         .year-slider-area {
             width: 100%;
             background: #f8fafc;
-            padding: 6px 12px;
-            border-radius: 2rem;
+            padding: 10px 14px;
+            border-radius: 14px;
             border: 1px solid #e2e8f0;
         }
-        .year-label {
-            font-size: 0.75rem;
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 4px;
+        .year-display {
+            text-align: center;
+            font-size: 1.15rem;
+            font-weight: 800;
+            margin-bottom: 6px;
             color: #1f2937;
         }
         input[type="range"] {
@@ -470,6 +494,75 @@
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
+        }
+        .round-score-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        .score-card {
+            border: 1px solid #d1d9e6;
+            border-radius: 12px;
+            padding: 8px;
+            text-align: center;
+            background: #f8fafc;
+        }
+        .score-card span {
+            display: block;
+            font-size: 0.72rem;
+            color: #64748b;
+        }
+        .score-card strong {
+            font-size: 1.05rem;
+            color: #0f1f4a;
+        }
+        .result-main {
+            padding: 0 2px;
+        }
+        .result-description {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #0f172a;
+            width: 100%;
+            line-height: 1.35;
+        }
+        .result-year-row {
+            margin-top: 8px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .year-chip {
+            border: 2px solid #1e3a8a;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+        .year-diff {
+            font-weight: 600;
+            color: #334155;
+        }
+        @media (min-width: 900px) {
+            .gameplay-layout {
+                grid-template-columns: minmax(0, 1fr) 350px;
+                gap: 12px;
+                padding-right: 16px;
+                padding-bottom: 12px;
+            }
+            .main-area {
+                margin: 12px 0 0 16px;
+            }
+            .control-bar {
+                border: 1px solid #dbe3ef;
+                border-radius: 1rem;
+                margin-top: 12px;
+                align-self: stretch;
+                justify-content: flex-end;
+            }
+            .big-btn {
+                margin-top: auto;
+            }
         }
         /* Скрытие копирайтов Яндекс.Карт */
         .ymaps-copyrights-pane,
@@ -521,14 +614,10 @@
             <div class="modal-close" id="closeRulesModal">✕</div>
             <p style="font-size: 1.3rem; font-weight: bold; text-align: center; margin-bottom: 1rem;">📜 Правила игры</p>
             <ul class="rules-list">
-                <li><span class="rule-bullet"></span> <strong>Цель:</strong> По историческому фото определить место на карте и указать год.</li>
-                <li><span class="rule-bullet"></span> <strong>Выбор места:</strong> Кликните на карту, чтобы поставить синий маркер.</li>
-                <li><span class="rule-bullet"></span> <strong>Выбор года:</strong> Перемещайте ползунок – год можно менять в любой момент до проверки.</li>
-                <li><span class="rule-bullet"></span> <strong>Подсчёт очков:</strong> Максимум за вопрос – 1000 очков (500 за год + 500 за место).</li>
-                <li><span class="rule-bullet"></span> <strong>Год:</strong> Правильный год = 500 очков. Каждый год разницы отнимает 10 очков.</li>
-                <li><span class="rule-bullet"></span> <strong>Расстояние:</strong> 150 метров и ближе = 500 очков. Далее баллы линейно уменьшаются до 0 на 5000 км.</li>
-                <li><span class="rule-bullet"></span> <strong>После проверки:</strong> Появится сплит-экран: сверху карта с вашим выбором и правильным ответом, снизу – фото. Кнопка станет «Следующий вопрос».</li>
-                <li><span class="rule-bullet"></span> <strong>Прогресс:</strong> Игра автоматически сохраняется. Вы можете продолжить с того же места при следующем запуске.</li>
+                <li><span class="rule-bullet"></span> <strong>Цель:</strong> Угадайте место на карте и примерный год снимка.</li>
+                <li><span class="rule-bullet"></span> <strong>Ход:</strong> Выберите точку на карте и год на ползунке, затем нажмите «Проверить».</li>
+                <li><span class="rule-bullet"></span> <strong>Очки за место:</strong> до 500 очков. 150 м и ближе — максимум, 2500 км и дальше — 0.</li>
+                <li><span class="rule-bullet"></span> <strong>Очки за год:</strong> до 500 очков. Чем меньше ошибка, тем выше результат.</li>
             </ul>
             <div class="modal-buttons">
                 <button class="modal-btn" id="closeRulesBtn">Понятно!</button>
@@ -547,7 +636,7 @@
 
     <!-- Меню -->
     <div id="menuScreen" class="screen menu-screen">
-        <div class="menu-title">TIMEGUESSER RUSSIA</div>
+        <div class="menu-title">HistoryGuesser</div>
         <div class="menu-buttons">
             <button id="singlePlayerBtn" class="menu-btn">Одиночная игра</button>
             <button id="multiPlayerBtn" class="menu-btn">Многопользовательская</button>
@@ -558,13 +647,17 @@
     <!-- Игровой экран -->
     <div id="gameScreen" class="screen game-screen hidden">
         <div class="game-header">
-            <button id="backToMenuBtn" class="back-btn">← Назад</button>
-            <div class="game-title">TIMEGUESSER</div>
-            <div style="width: 60px;"></div>
+            <div class="header-left">
+                <button id="backToMenuBtn" class="back-btn">← Назад</button>
+                <div class="round-badge" id="roundBadge">Раунд 1/5</div>
+            </div>
+            <div class="game-title">HistoryGuesser</div>
+            <div class="header-spacer"></div>
         </div>
         <div class="info-block" id="infoBlock">
-            📍 Нажми на карту, чтобы выбрать место, и выбери год на ползунке
+            Выберите место на карте и год
         </div>
+        <div class="gameplay-layout">
         <div id="mainArea" class="main-area">
             <div id="toggleView" class="toggle-view">
                 <div class="view-container">
@@ -583,14 +676,19 @@
                     <div class="switch-btn" id="switchViewBtn">
                         <span class="switch-icon" id="switchIcon">🗺️</span>
                     </div>
-                    <div class="selected-info" id="selectedInfo">
-                        🏆 Счёт: <span id="totalScore">0</span>
-                    </div>
+                    <div class="selected-info" id="selectedInfo">🏆 <span id="totalScore">0</span></div>
                 </div>
             </div>
             <div id="splitView" class="split-container hidden">
                 <div id="splitMap" class="split-map"></div>
-                <div id="distanceCard" class="distance-card">📏 Разница: —</div>
+                <div id="distanceCard" class="distance-card">Разница: —</div>
+                <div class="result-main">
+                    <div class="result-description" id="resultDescription">—</div>
+                    <div class="result-year-row">
+                        <div class="year-chip">Год: <span id="correctYearChip">—</span></div>
+                        <div class="year-diff" id="yearDiffText">Разница: —</div>
+                    </div>
+                </div>
                 <div id="splitImage" class="split-image">
                     <div class="image-wrapper" id="splitImageWrapper">
                         <img id="splitHistoricalImage" class="historical-img historical-fg" src="" alt="Историческое фото">
@@ -600,13 +698,16 @@
         </div>
         <div class="control-bar">
             <div id="yearSliderArea" class="year-slider-area">
-                <div class="year-label">
-                    <span>🗓️ ВЫБЕРИТЕ ГОД</span>
-                    <span id="yearValueDisplay">1950</span>
-                </div>
+                <div class="year-display" id="yearValueDisplay">1950</div>
                 <input type="range" id="yearSlider" min="1850" max="2024" step="1" value="1950">
             </div>
+            <div id="roundScoreCards" class="round-score-cards hidden">
+                <div class="score-card"><span>За место</span><strong id="distancePoints">0</strong></div>
+                <div class="score-card"><span>За год</span><strong id="yearPoints">0</strong></div>
+                <div class="score-card"><span>За раунд</span><strong id="roundPoints">0</strong></div>
+            </div>
             <button id="actionBtn" class="big-btn">✅ ПРОВЕРИТЬ</button>
+        </div>
         </div>
     </div>
 
@@ -654,6 +755,14 @@
             const yearSliderArea = document.getElementById('yearSliderArea');
             const selectedInfoDiv = document.getElementById('selectedInfo');
             const distanceCard = document.getElementById('distanceCard');
+            const roundBadge = document.getElementById('roundBadge');
+            const resultDescription = document.getElementById('resultDescription');
+            const correctYearChip = document.getElementById('correctYearChip');
+            const yearDiffText = document.getElementById('yearDiffText');
+            const roundScoreCards = document.getElementById('roundScoreCards');
+            const distancePoints = document.getElementById('distancePoints');
+            const yearPoints = document.getElementById('yearPoints');
+            const roundPoints = document.getElementById('roundPoints');
 
             // Переменные игры
             let currentQuestions = [];
@@ -1016,11 +1125,11 @@
                 if (pointsYear < 0) pointsYear = 0;
                 let pointsDist = 0;
                 if (distKm <= 0.15) pointsDist = 500;
-                else if (distKm >= 5000) pointsDist = 0;
-                else pointsDist = Math.round(500 * (1 - (distKm - 0.15) / (5000 - 0.15)));
+                else if (distKm >= 2500) pointsDist = 0;
+                else pointsDist = Math.round(500 * (1 - (distKm - 0.15) / (2500 - 0.15)));
                 if (pointsDist < 0) pointsDist = 0;
                 const total = pointsYear + pointsDist;
-                return { total, distKm, yearDiff };
+                return { total, distKm, yearDiff, pointsYear, pointsDist };
             }
 
             // --- Яндекс.Карты (только карта, без копирайтов) ---
@@ -1128,7 +1237,7 @@
                 clearTimeout(infoTimeout);
                 infoBlock.innerHTML = msg;
                 infoTimeout = setTimeout(() => {
-                    if (!questionAnswered && !isWaitingForNext) infoBlock.innerHTML = "📍 Нажми на карту, чтобы выбрать место, и выбери год на ползунке";
+                    if (!questionAnswered && !isWaitingForNext) infoBlock.innerHTML = "Выберите место на карте и год";
                 }, dur);
             }
 
@@ -1161,11 +1270,12 @@
                 actionBtn.disabled = false;
                 actionBtn.innerText = "✅ ПРОВЕРИТЬ";
                 actionBtn.onclick = handleCheck;
-                setInfo("📍 Нажми на карту, чтобы выбрать место, и выбери год на ползунке", 2000);
+                setInfo("Выберите место на карте и год", 2000);
                 clearMapMarkers();  // очищаем старые маркеры
                 selectedLat = selectedLng = null;
-                selectedInfoDiv.innerHTML = `🏆 Счёт: ${Math.floor(totalPoints)}`;
+                selectedInfoDiv.innerHTML = `🏆 ${Math.floor(totalPoints)}`;
                 const q = currentQuestions[currentIndex];
+                roundBadge.textContent = `Раунд ${currentIndex + 1}/${currentQuestions.length}`;
                 let yearToSet = savedYear !== null ? savedYear : Math.floor(Math.random()*(2024-1850+1))+1850;
                 yearSlider.value = yearToSet;
                 selectedYear = yearToSet;
@@ -1174,6 +1284,7 @@
                 toggleViewDiv.classList.remove('hidden');
                 splitViewDiv.classList.add('hidden');
                 yearSliderArea.style.display = '';
+                roundScoreCards.classList.add('hidden');
                 if (currentView === 'map') switchView();
                 else requestAnimationFrame(() => resetImageState());
                 resetMapToMoscow();
@@ -1207,14 +1318,8 @@
                 const res = calcPoints(selectedLat, selectedLng, selectedYear, q.correctLat, q.correctLng, q.correctYear);
                 totalPoints += res.total;
                 totalScoreSpan.innerText = Math.floor(totalPoints);
-                selectedInfoDiv.innerHTML = `🏆 Счёт: ${Math.floor(totalPoints)} &nbsp;|&nbsp; 🎯 Очки: ${res.total}`;
-                const yearDiffText = res.yearDiff === 0 ? "Год выбран верно!" : `Разница в годах: ${res.yearDiff} лет`;
-                setInfo(
-                    `✅ <strong>Правильный ответ:</strong> ${q.description}<br>` +
-                    `🎯 Очки за раунд: ${res.total}<br>` +
-                    `${yearDiffText}<br>`,
-                    8000
-                );
+                selectedInfoDiv.innerHTML = `🏆 ${Math.floor(totalPoints)}`;
+                setInfo(`Раунд завершён. Проверьте результат и переходите к следующему вопросу.`, 4500);
                 addCorrectMarker(q.correctLat, q.correctLng, q.correctYear);
                 drawLineAndZoom(selectedLat, selectedLng, q.correctLat, q.correctLng);
                 if (userMarker) userMarker.properties.set("hintContent", `📍 Ваш выбор (${selectedYear} г.)<br>Разница: ${res.distKm.toFixed(1)} км`);
@@ -1224,7 +1329,14 @@
                 yearSliderArea.style.display = 'none';
                 toggleViewDiv.classList.add('hidden');
                 splitViewDiv.classList.remove('hidden');
-                distanceCard.innerHTML = `📏 Разница в местоположении: ${res.distKm.toFixed(1)} км`;
+                distanceCard.innerHTML = `Разница в местоположении: ${res.distKm.toFixed(1)} км`;
+                resultDescription.textContent = q.description;
+                correctYearChip.textContent = q.correctYear;
+                yearDiffText.textContent = res.yearDiff === 0 ? 'Разница: 0 лет' : `Разница: ${res.yearDiff} лет`;
+                distancePoints.textContent = res.pointsDist;
+                yearPoints.textContent = res.pointsYear;
+                roundPoints.textContent = res.total;
+                roundScoreCards.classList.remove('hidden');
                 initSplitMap().catch(console.error);
                 splitHistoricalImg.src = historicalImg.src;
                 splitHistoricalImg.style.width = historicalImg.style.width;
@@ -1291,13 +1403,13 @@
             // --- Сохранение / загрузка ---
             function saveGameState() {
                 const state = { totalPoints, currentIndex, selectedYear, currentQuestions };
-                localStorage.setItem('timeguesser_save', JSON.stringify(state));
+                localStorage.setItem('historyguesser_save', JSON.stringify(state));
             }
             function loadGameState() {
-                const saved = localStorage.getItem('timeguesser_save');
+                const saved = localStorage.getItem('historyguesser_save');
                 return saved ? JSON.parse(saved) : null;
             }
-            function clearGameState() { localStorage.removeItem('timeguesser_save'); }
+            function clearGameState() { localStorage.removeItem('historyguesser_save'); }
 
             // --- Запуск игры с состоянием ---
               // --- Запуск игры с состоянием ---
@@ -1329,7 +1441,7 @@
                         splitViewDiv.classList.add('hidden');
                         yearSliderArea.style.display = '';
                         if (currentView === 'map') switchView();
-                        selectedInfoDiv.innerHTML = `🏆 Счёт: ${Math.floor(totalPoints)}`;
+                        selectedInfoDiv.innerHTML = `🏆 ${Math.floor(totalPoints)}`;
                     } else {
                         currentQuestions = getRandomQuestions();
                         totalPoints = 0;
@@ -1354,6 +1466,52 @@
                 document.getElementById('switchIcon').innerHTML = '🗺️';
                 hideCopyrights();
             }
+
+            // Перетаскивание кнопки переключения карта/фото
+            let switchDrag = null;
+            function clampSwitchPosition(x, y) {
+                const bounds = switchViewBtn.parentElement.getBoundingClientRect();
+                const btnRect = switchViewBtn.getBoundingClientRect();
+                const maxX = bounds.width - btnRect.width - 6;
+                const maxY = bounds.height - btnRect.height - 6;
+                return {
+                    x: clamp(x, 6, maxX),
+                    y: clamp(y, 6, maxY)
+                };
+            }
+            switchViewBtn.addEventListener('pointerdown', (e) => {
+                const rect = switchViewBtn.getBoundingClientRect();
+                const parentRect = switchViewBtn.parentElement.getBoundingClientRect();
+                switchDrag = {
+                    id: e.pointerId,
+                    startX: e.clientX,
+                    startY: e.clientY,
+                    left: rect.left - parentRect.left,
+                    top: rect.top - parentRect.top,
+                    moved: false
+                };
+                switchViewBtn.setPointerCapture?.(e.pointerId);
+            });
+            switchViewBtn.addEventListener('pointermove', (e) => {
+                if (!switchDrag || switchDrag.id !== e.pointerId) return;
+                const dx = e.clientX - switchDrag.startX;
+                const dy = e.clientY - switchDrag.startY;
+                if (Math.abs(dx) > 3 || Math.abs(dy) > 3) switchDrag.moved = true;
+                if (!switchDrag.moved) return;
+                const pos = clampSwitchPosition(switchDrag.left + dx, switchDrag.top + dy);
+                switchViewBtn.style.left = `${pos.x}px`;
+                switchViewBtn.style.top = `${pos.y}px`;
+                switchViewBtn.style.right = 'auto';
+                switchViewBtn.style.bottom = 'auto';
+                switchViewBtn.classList.add('dragging');
+            });
+            switchViewBtn.addEventListener('pointerup', (e) => {
+                if (!switchDrag || switchDrag.id !== e.pointerId) return;
+                const moved = switchDrag.moved;
+                switchDrag = null;
+                switchViewBtn.classList.remove('dragging');
+                if (!moved) switchView();
+            });
 
             // --- Модальное окно выбора ---
             const modal = document.getElementById('gameModeModal');
@@ -1434,7 +1592,6 @@
             imageWrapper.addEventListener('dblclick', onDoubleTapReset);
             imageWrapper.style.cursor = 'grab';
 
-            switchViewBtn.addEventListener('click', switchView);
             zoomInBtn.addEventListener('click', () => zoomBy(1.18));
             zoomOutBtn.addEventListener('click', () => zoomBy(0.82));
 
