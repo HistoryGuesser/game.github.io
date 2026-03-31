@@ -118,7 +118,7 @@
       position: absolute; right: 16px; bottom: 16px; z-index: 40;
       width: 64px; height: 64px; border-radius: 14px; border: 1px solid #1e3a8a;
       background: rgba(0,0,0,.62); color: #fff; font-size: 30px; display: grid; place-items: center;
-      cursor: grab; transition: transform .08s;
+      cursor: grab; transition: transform .08s; touch-action: none;
     }
     .switch-btn:active { transform: scale(.96); }
     .switch-btn.dragging { transition: none; cursor: grabbing; }
@@ -592,6 +592,7 @@
         yearValueDisplay.textContent = selectedYear;
 
         actionBtn.disabled = false;
+        actionBtn.style.display = '';
         actionBtn.textContent = '✅ ПРОВЕРИТЬ';
         actionBtn.onclick = handleCheck;
 
@@ -800,9 +801,10 @@
       });
       switchViewBtn.addEventListener('pointermove', (e) => {
         if (!switchDrag || switchDrag.id !== e.pointerId) return;
+        e.preventDefault();
         const dx = e.clientX - switchDrag.sx;
         const dy = e.clientY - switchDrag.sy;
-        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) switchDrag.moved = true;
+        if (Math.abs(dx) > 2 || Math.abs(dy) > 2) switchDrag.moved = true;
         const pos = clampSwitchPosition(switchDrag.left + dx, switchDrag.top + dy);
         switchViewBtn.style.left = `${pos.x}px`;
         switchViewBtn.style.top = `${pos.y}px`;
@@ -810,14 +812,20 @@
         switchViewBtn.style.bottom = 'auto';
         switchViewBtn.classList.add('dragging');
       });
-      switchViewBtn.addEventListener('pointerup', (e) => {
+
+      const finishSwitchDrag = (e) => {
         if (!switchDrag || switchDrag.id !== e.pointerId) return;
         const moved = switchDrag.moved;
+        switchViewBtn.releasePointerCapture?.(e.pointerId);
         switchDrag = null;
         switchViewBtn.classList.remove('dragging');
         if (!moved) switchView();
-      });
-      switchViewBtn.addEventListener('pointercancel', () => {
+      };
+
+      switchViewBtn.addEventListener('pointerup', finishSwitchDrag);
+      switchViewBtn.addEventListener('pointercancel', (e) => {
+        if (!switchDrag || switchDrag.id !== e.pointerId) return;
+        switchViewBtn.releasePointerCapture?.(e.pointerId);
         switchDrag = null;
         switchViewBtn.classList.remove('dragging');
       });
