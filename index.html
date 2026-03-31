@@ -17,8 +17,9 @@
     .hidden { display: none !important; }
 
     .screen {
-      width: 100vw; height: 100vh; background: #fff; display: flex; flex-direction: column;
+      width: 100vw; height: 100vh; height: 100dvh; background: #fff; display: flex; flex-direction: column;
     }
+    #gameScreen { overflow-y: auto; overscroll-behavior: contain; }
 
     .menu-screen {
       align-items: center; justify-content: center; text-align: center;
@@ -69,7 +70,7 @@
       position: relative; min-height: 0; border-top: 1px solid #dbe3ef; border-bottom: 1px solid #dbe3ef;
       margin-top: 8px; overflow: hidden;
     }
-    .control-bar { padding: 10px 16px 14px; display: flex; flex-direction: column; gap: 10px; }
+    .control-bar { padding: 10px 16px calc(14px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 10px; }
 
     @media (min-width: 980px) {
       .game-layout { padding: 0 12px 10px; }
@@ -118,7 +119,7 @@
       position: absolute; right: 16px; bottom: 16px; z-index: 40;
       width: 64px; height: 64px; border-radius: 14px; border: 1px solid #1e3a8a;
       background: rgba(0,0,0,.62); color: #fff; font-size: 30px; display: grid; place-items: center;
-      cursor: grab; transition: transform .08s;
+      cursor: grab; transition: transform .08s; touch-action: none; will-change: left, top;
     }
     .switch-btn:active { transform: scale(.96); }
     .switch-btn.dragging { transition: none; cursor: grabbing; }
@@ -501,8 +502,11 @@
       function fitImage() {
         const m = metrics();
         if (!m) return;
-        minScale = Math.max(.15, m.contain * .9);
-        scale = m.contain;
+        const EDGE_MARGIN = 25;
+        const minByWidth = Math.max(.15, (m.rect.width - EDGE_MARGIN * 2) / imgW);
+        const minByHeight = Math.max(.15, (m.rect.height - EDGE_MARGIN * 2) / imgH);
+        minScale = Math.max(.15, minByWidth, minByHeight);
+        scale = Math.max(m.contain, minScale);
         translateX = (m.rect.width - imgW * scale) / 2;
         translateY = (m.rect.height - imgH * scale) / 2;
         applyBounds();
@@ -592,6 +596,7 @@
         yearValueDisplay.textContent = selectedYear;
 
         actionBtn.disabled = false;
+        actionBtn.style.display = '';
         actionBtn.textContent = '✅ ПРОВЕРИТЬ';
         actionBtn.onclick = handleCheck;
 
@@ -792,35 +797,45 @@
           y: clamp(y, 6, parent.height - rect.height - 6)
         };
       }
-      switchViewBtn.addEventListener('pointerdown', (e) => {
-        const rect = switchViewBtn.getBoundingClientRect();
-        const parent = switchViewBtn.parentElement.getBoundingClientRect();
-        switchDrag = { id: e.pointerId, sx: e.clientX, sy: e.clientY, left: rect.left - parent.left, top: rect.top - parent.top, moved: false };
-        switchViewBtn.setPointerCapture?.(e.pointerId);
-      });
-      switchViewBtn.addEventListener('pointermove', (e) => {
-        if (!switchDrag || switchDrag.id !== e.pointerId) return;
-        const dx = e.clientX - switchDrag.sx;
-        const dy = e.clientY - switchDrag.sy;
-        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) switchDrag.moved = true;
+
+      const moveSwitchButton = (clientX, clientY) => {
+        if (!switchDrag) return;
+        const dx = clientX - switchDrag.sx;
+        const dy = clientY - switchDrag.sy;
+        if (Math.abs(dx) > 1 || Math.abs(dy) > 1) switchDrag.moved = true;
         const pos = clampSwitchPosition(switchDrag.left + dx, switchDrag.top + dy);
         switchViewBtn.style.left = `${pos.x}px`;
         switchViewBtn.style.top = `${pos.y}px`;
         switchViewBtn.style.right = 'auto';
         switchViewBtn.style.bottom = 'auto';
         switchViewBtn.classList.add('dragging');
-      });
-      switchViewBtn.addEventListener('pointerup', (e) => {
-        if (!switchDrag || switchDrag.id !== e.pointerId) return;
+      };
+
+      const finishSwitchDrag = (pointerId, canceled = false) => {
+        if (!switchDrag || switchDrag.id !== pointerId) return;
         const moved = switchDrag.moved;
+        switchViewBtn.releasePointerCapture?.(pointerId);
         switchDrag = null;
         switchViewBtn.classList.remove('dragging');
-        if (!moved) switchView();
+        if (!canceled && !moved) switchView();
+      };
+
+      switchViewBtn.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        const rect = switchViewBtn.getBoundingClientRect();
+        const parent = switchViewBtn.parentElement.getBoundingClientRect();
+        switchDrag = { id: e.pointerId, sx: e.clientX, sy: e.clientY, left: rect.left - parent.left, top: rect.top - parent.top, moved: false };
+        switchViewBtn.setPointerCapture?.(e.pointerId);
       });
-      switchViewBtn.addEventListener('pointercancel', () => {
-        switchDrag = null;
-        switchViewBtn.classList.remove('dragging');
-      });
+
+      window.addEventListener('pointermove', (e) => {
+        if (!switchDrag || switchDrag.id !== e.pointerId) return;
+        e.preventDefault();
+        moveSwitchButton(e.clientX, e.clientY);
+      }, { passive: false });
+
+      window.addEventListener('pointerup', (e) => finishSwitchDrag(e.pointerId));
+      window.addEventListener('pointercancel', (e) => finishSwitchDrag(e.pointerId, true));
 
       byId('singlePlayerBtn').addEventListener('click', () => {
         const hasSave = !!loadGameState();
