@@ -199,6 +199,7 @@
     }
   </style>
   <script src="https://api-maps.yandex.ru/2.1/?apikey=c03f89a7-f0e9-47b7-95f0-57e818aa7701&lang=ru_RU" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <div id="gameModeModal" class="modal hidden">
@@ -539,10 +540,14 @@
         const yearDiff = Math.abs(userYear - correctYear);
         const pointsYear = Math.max(0, 500 - yearDiff * 10);
 
+        const distM = distKm * 1000;
         let pointsDist = 0;
-        if (distKm <= 0.15) pointsDist = 500;
-        else if (distKm >= 2500) pointsDist = 0;
-        else pointsDist = Math.round(500 * (1 - (distKm - 0.15) / (2500 - 0.15)));
+        if (distM <= 150) pointsDist = 500;
+        else if (distM >= 2500000) pointsDist = 0;
+        else {
+          const t = (distM - 150) / (2500000 - 150);
+          pointsDist = Math.round(500 * (1 - Math.pow(t, 3)));
+        }
 
         return { total: pointsYear + pointsDist, distKm, yearDiff, pointsYear, pointsDist };
       }
