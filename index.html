@@ -318,6 +318,14 @@
       .score-card span { font-size: .68rem; }
       .score-card strong { font-size: .92rem; }
       .split-next-btn { padding: 8px 10px; font-size: .88rem; }
+      #gameScreen.result-mode .split-right-controls { padding-bottom: calc(56px + env(safe-area-inset-bottom)); }
+      #gameScreen.result-mode .split-next-btn {
+        position: fixed;
+        left: 10px;
+        right: 10px;
+        bottom: calc(6px + env(safe-area-inset-bottom));
+        z-index: 1200;
+      }
     }
 
     /* Desktop result scene */
