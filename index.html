@@ -320,8 +320,9 @@
       .split-next-btn { padding: 8px 10px; font-size: .88rem; }
       #gameScreen.result-mode .split-container { padding: 4px; }
       #gameScreen.result-mode .split-columns {
-        grid-template-rows: max-content auto max-content auto max-content;
+        grid-template-rows: max-content min-content max-content min-content max-content;
         gap: 3px;
+        align-content: start;
       }
       #gameScreen.result-mode .split-answer-block { padding: 6px 8px; border-radius: 10px; }
       #gameScreen.result-mode .result-description { font-size: .88rem; line-height: 1.15; }
@@ -1012,7 +1013,7 @@
         const gap = parseFloat(styles.rowGap || styles.gap || '0') || 0;
         const fixedHeight = splitAnswerBlock.offsetHeight + distanceCard.offsetHeight + splitRightControls.offsetHeight + gap * 4;
         // Запас под системные панели/погрешности, чтобы кнопка всегда оставалась в видимой зоне.
-        const reservePx = 28;
+        const reservePx = 14;
         const available = Math.max(0, visibleHeight - fixedHeight - reservePx);
         const shared = Math.max(40, Math.floor(available / 2));
         splitMapDiv.style.height = `${shared}px`;
