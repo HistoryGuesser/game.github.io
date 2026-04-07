@@ -301,7 +301,8 @@
       .year-slider-area { padding: 8px 10px; }
       .split-container { padding: 8px; }
       .split-columns {
-        grid-template-rows: auto minmax(110px, 1.8fr) auto minmax(100px, 1.3fr) auto;
+        grid-template-rows: auto minmax(80px, 1.35fr) auto minmax(70px, 0.95fr) auto;
+        gap: 6px;
       }
       .split-score-grid { gap: 6px; }
       .score-card { padding: 6px; }
@@ -1062,10 +1063,8 @@
         actionBtn.style.display = 'none';
         roundScoreCards.classList.add('hidden');
 
-        // На ПК infoBlock скрыт — вся инфа в splitView
-        if (isDesktop()) {
-          infoBlock.style.display = 'none';
-        }
+        // В сцене результата скрываем infoBlock на всех устройствах
+        infoBlock.style.display = 'none';
 
         distanceCard.textContent = `Расстояние: ${res.distKm.toFixed(1)} км`;
         // Только splitView карточки — roundScoreCards в control-bar скрыты на ПК в результате
@@ -1080,12 +1079,6 @@
         splitHistoricalImage.src = historicalImg.src;
         updateSplitImagePreview();
         initSplitMap().catch(console.error);
-
-        // На мобильной показываем краткое сообщение в infoBlock (без дублирования данных)
-        if (!isDesktop()) {
-          infoBlock.classList.add('compact');
-          infoBlock.innerHTML = 'Раунд завершён. Перейдите к следующему вопросу.';
-        }
 
         const goNext = () => {
           currentIndex += 1;
