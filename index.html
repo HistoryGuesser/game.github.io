@@ -148,15 +148,38 @@
     .switch-btn:active { transform: scale(.96); }
     .switch-btn.dragging { transition: none; cursor: grabbing; }
 
-    .split-container { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 10px; padding: 10px; overflow: auto; }
-    .split-map, .split-image { min-height: 180px; flex: 1; border-radius: 12px; overflow: hidden; background: #eef2f6; position: relative; }
-    .split-columns { display: contents; }
-    .split-left, .split-right { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
-    .distance-card { border: 1px solid #dbe3ef; border-radius: 12px; padding: 10px 12px; font-weight: 700; color: #1e3a8a; text-align: center; background: #fff; }
-    .result-description { font-size: clamp(1rem, 2.2vw, 1.25rem); font-weight: 700; color: #0f172a; line-height: 1.35; }
-    .result-year-row { margin-top: 8px; display: flex; gap: 10px; flex-wrap: wrap; }
-    .year-chip { border: 2px solid #1e3a8a; border-radius: 10px; padding: 4px 10px; font-weight: 800; }
-    .year-diff { display: flex; align-items: center; color: #334155; font-weight: 700; }
+   .split-container {
+      position: absolute; inset: 0; overflow: auto; padding: 10px;
+      background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+    }
+    .split-columns {
+      display: flex; flex-direction: column; gap: 10px; max-width: 1100px; margin: 0 auto;
+    }
+    .split-answer-block {
+      background: #ffffff; border: 1px solid #dbe3ef; border-radius: 14px; padding: 12px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+    }
+    .result-description { font-size: clamp(1rem, 2.2vw, 1.2rem); font-weight: 800; color: #0f172a; line-height: 1.35; }
+    .result-year-row { margin-top: 9px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .year-chip {
+      border: 2px solid #1e3a8a; border-radius: 10px; padding: 5px 10px;
+      font-weight: 800; color: #1e3a8a; background: #eff6ff;
+    }
+    .year-diff {
+      display: flex; align-items: center; border-radius: 10px; padding: 6px 10px;
+      color: #334155; font-weight: 700; background: #f8fafc; border: 1px solid #dbe3ef;
+    }
+    .split-map, .split-image {
+      min-height: 220px; border-radius: 14px; overflow: hidden; background: #eef2f6; position: relative;
+      border: 1px solid #dbe3ef;
+    }
+    .distance-card {
+      border: 1px solid #bfd5ff; border-radius: 12px; padding: 10px 12px;
+      font-weight: 800; color: #1e3a8a; text-align: center; background: #eff6ff;
+    }
+    .split-right-controls { display: flex; flex-direction: column; gap: 10px; }
+    .split-score-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+
 
     .year-slider-area { border: 1px solid #dbe3ef; border-radius: 12px; padding: 10px 12px; background: #f8fafc; }
     .year-display { text-align: center; font-size: 1.2rem; font-weight: 800; margin-bottom: 6px; }
@@ -242,73 +265,18 @@
       .main-area { margin-top: 4px; min-height: 52vh; }
       .control-bar { padding: 8px 8px 10px; }
       .year-slider-area { padding: 8px 10px; }
-      /* На мобильной скрываем блок с описанием в splitView — данные уже есть в infoBlock */
-      #splitAnswerBlock { display: none !important; }
+      .split-container { padding: 8px; }
+      .split-map { min-height: 190px; }
+      .split-image { min-height: 180px; }
     }
 
     /* Desktop result scene */
     @media (min-width: 980px) {
-      .split-container {
-        flex-direction: row !important;
-        gap: 0 !important;
-        padding: 0 !important;
-        overflow: hidden !important;
-      }
-      .split-columns {
-        display: flex !important;
-        flex-direction: row !important;
-        width: 100%;
-        height: 100%;
-        gap: 0;
-      }
-      .split-left {
-        flex: 0 0 55%;
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 8px;
-        padding: 12px;
-        min-height: 0;
-        overflow: hidden;
-      }
-      .split-image {
-        flex: 1;
-        min-height: 0;
-        border-radius: 12px;
-        overflow: hidden;
-        background: #eef2f6;
-        position: relative;
-      }
-      #distanceCard {
-        flex: 0 0 auto;
-        font-size: 1rem;
-      }
-      .split-right {
-        flex: 1;
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 8px;
-        padding: 12px;
-        min-height: 0;
-        border-left: 1px solid #dbe3ef;
-      }
-      #splitMap {
-        flex: 1;
-        min-height: 0;
-        border-radius: 12px;
-        overflow: hidden;
-      }
-      .split-right-controls {
-        flex: 0 0 auto;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-    }
-
-    .split-answer-block {
-      background: #f0f6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 10px 12px; flex: 0 0 auto;
-    }
-    .split-score-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .split-container { padding: 12px; }
+      .split-columns { gap: 12px; }
+      .split-map { min-height: 320px; }
+      .split-image { min-height: 250px; }
+      .split-right-controls { max-width: 760px; width: 100%; margin: 0 auto; }
 
     .ymaps-copyrights-pane, .ymaps-logo, .ymaps-copyright,
     [class*="ymaps-copyright"], [class*="ymaps-logo"],
@@ -437,15 +405,16 @@
 
         <div id="splitView" class="split-container hidden">
           <div class="split-columns">
-            <div class="split-left">
-              <div id="distanceCard" class="distance-card">Разница: —</div>
               <div id="splitAnswerBlock" class="split-answer-block">
                 <div id="splitAnswerDescription" class="result-description">—</div>
                 <div class="result-year-row">
+                  <span class="year-chip">Правильный год: <span id="splitCorrectYear">—</span></span>
                   <span class="year-chip">Год: <span id="splitCorrectYear">—</span></span>
                   <span class="year-diff">Разница: <span id="splitYearDiff">—</span> лет</span>
                 </div>
               </div>
+            <div id="splitMap" class="split-map"></div>
+            <div id="distanceCard" class="distance-card">Расстояние: —</div>
               <div class="split-image">
                 <div id="splitImageWrapper" class="image-wrapper">
                   <img id="splitHistoricalImageBg" class="historical-img historical-bg" src="" alt="" aria-hidden="true">
@@ -453,9 +422,6 @@
                   <div class="image-overlay" aria-hidden="true"></div>
                 </div>
               </div>
-            </div>
-            <div class="split-right">
-              <div id="splitMap" class="split-map"></div>
               <div class="split-right-controls">
                 <div class="split-score-grid">
                   <div class="score-card"><span>За место</span><strong id="splitDistancePoints">0</strong></div>
@@ -463,7 +429,6 @@
                   <div class="score-card"><span>За раунд</span><strong id="splitRoundPoints">0</strong></div>
                 </div>
                 <button id="splitNextBtn" class="big-btn split-next-btn">➡️ СЛЕДУЮЩИЙ ВОПРОС</button>
-              </div>
             </div>
           </div>
         </div>
@@ -1015,6 +980,7 @@
         actionBtn.textContent = '✅ ПРОВЕРИТЬ';
         actionBtn.onclick = handleCheck;
         splitNextBtn.onclick = null;
+        splitNextBtn.textContent = '➡️ СЛЕДУЮЩИЙ ВОПРОС';
 
         setInfo('Определите место на карте и укажите наиболее вероятный год.', 2000);
         loadImage(q.imageUrl, q.description);
@@ -1078,6 +1044,8 @@
             finishGame();
           }
         };
+        const isLastRound = currentIndex === currentQuestions.length - 1;
+        splitNextBtn.textContent = isLastRound ? '🏁 ЗАВЕРШИТЬ ИГРУ' : '➡️ СЛЕДУЮЩИЙ ВОПРОС';
         splitNextBtn.onclick = goNext;
       }
 
