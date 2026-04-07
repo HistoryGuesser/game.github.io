@@ -320,9 +320,8 @@
       .split-next-btn { padding: 8px 10px; font-size: .88rem; }
       #gameScreen.result-mode .split-container { padding: 4px; }
       #gameScreen.result-mode .split-columns {
-        grid-template-rows: auto minmax(72px, 22vh) max-content minmax(72px, 22vh) max-content;
+        grid-template-rows: max-content minmax(0, 1fr) max-content minmax(0, 1fr) max-content;
         gap: 3px;
-        align-content: start;
       }
       #gameScreen.result-mode .split-answer-block { padding: 6px 8px; border-radius: 10px; }
       #gameScreen.result-mode .result-description { font-size: .88rem; line-height: 1.15; }
@@ -336,8 +335,8 @@
       }
       #gameScreen.result-mode .split-map,
       #gameScreen.result-mode .split-image {
-        min-height: 72px;
-        height: 22vh;
+        min-height: 0;
+        height: auto;
       }
       #gameScreen.result-mode .split-right-controls { gap: 4px; }
       #gameScreen.result-mode .split-score-grid { gap: 4px; }
