@@ -184,20 +184,20 @@
     .switch-btn.dragging { transition: none; cursor: grabbing; }
 
     .split-container {
-      position: absolute; inset: 0; overflow: hidden; padding: 10px;
+      position: absolute; inset: 0; overflow: hidden; padding: 0;
       background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
     }
     .split-columns {
       display: grid;
       grid-template-rows: auto minmax(130px, 1fr) max-content minmax(120px, 1fr) max-content;
-      gap: 8px;
+      gap: 0;
       max-width: 1100px;
       margin: 0 auto;
       height: 100%;
       min-height: 0;
     }
     .split-answer-block {
-      background: #ffffff; border: none; border-radius: 14px; padding: 12px;
+      background: #ffffff; border: none; border-radius: 0; padding: 12px;
       box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
     }
     .result-description { font-size: clamp(1rem, 2.2vw, 1.2rem); font-weight: 800; color: #0f172a; line-height: 1.35; }
@@ -215,15 +215,15 @@
       color: #334155; font-weight: 700;
     }
     .split-map, .split-image {
-      min-height: 0; border-radius: 14px; overflow: hidden; background: #eef2f6; position: relative;
+      min-height: 0; border-radius: 0; overflow: hidden; background: #eef2f6; position: relative;
       border: none;
     }
     .distance-card {
-      border: none; border-radius: 12px; padding: 10px 12px;
+      border: none; border-radius: 0; padding: 10px 12px;
       font-weight: 800; color: #1e3a8a; text-align: center; background: #eff6ff;
     }
-    .split-right-controls { display: flex; flex-direction: column; gap: 10px; }
-    .split-score-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .split-right-controls { display: flex; flex-direction: column; gap: 0; }
+    .split-score-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
     .split-next-btn { width: 100%; }
 
     .year-slider-area { border: 1px solid #dbe3ef; border-radius: 12px; padding: 10px 12px; background: #f8fafc; }
@@ -312,15 +312,15 @@
       .year-slider-area { padding: 8px 10px; }
       
       /* Уменьшаем отступы в сплите */
-      .split-container { padding: 4px; gap: 2px; }
-      .split-answer-block { padding: 6px 10px; margin-bottom: 2px; }
+      .split-container { padding: 0; gap: 0; }
+      .split-answer-block { padding: 6px 10px; margin-bottom: 0; }
       .result-description { font-size: .9rem; line-height: 1.2; }
       .result-year-row { margin-top: 3px; gap: 6px; }
       .year-chip { padding: 3px 8px; font-size: .8rem; }
       .year-diff { font-size: .8rem; }
-      .distance-card { padding: 4px 8px; font-size: .75rem; margin: 2px 0; }
-      .split-right-controls { gap: 6px; margin-top: 2px; }
-      .split-score-grid { gap: 6px; }
+      .distance-card { padding: 4px 8px; font-size: .75rem; margin: 0; }
+      .split-right-controls { gap: 0; margin-top: 0; }
+      .split-score-grid { gap: 0; }
       .score-card { padding: 4px 4px; }
       .score-card span { font-size: .65rem; }
       .score-card strong { font-size: .85rem; }
