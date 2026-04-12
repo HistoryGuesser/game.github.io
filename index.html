@@ -321,35 +321,35 @@
       .score-card span { font-size: .68rem; }
       .score-card strong { font-size: .92rem; }
       .split-next-btn { padding: 8px 10px; font-size: .88rem; }
-      #gameScreen.result-mode .split-container { padding: 4px 0; }
+      #gameScreen.result-mode .split-container { padding: 6px 0; }
       #gameScreen.result-mode .split-columns {
         grid-template-rows: max-content min-content max-content min-content max-content;
-        gap: 3px;
+        gap: 4px;
         align-content: start;
       }
-      #gameScreen.result-mode .split-answer-block { padding: 6px 8px; border-radius: 10px; }
-      #gameScreen.result-mode .result-description { font-size: .88rem; line-height: 1.15; }
-      #gameScreen.result-mode .result-year-row { margin-top: 3px; gap: 5px; }
-      #gameScreen.result-mode .year-chip { padding: 2px 6px; font-size: .8rem; border-width: 1px; }
-      #gameScreen.result-mode .year-diff { font-size: .8rem; }
+      #gameScreen.result-mode .split-answer-block { padding: 8px 10px; border-radius: 12px; }
+      #gameScreen.result-mode .result-description { font-size: .95rem; line-height: 1.2; }
+      #gameScreen.result-mode .result-year-row { margin-top: 4px; gap: 6px; }
+      #gameScreen.result-mode .year-chip { padding: 3px 8px; font-size: .86rem; border-width: 1px; }
+      #gameScreen.result-mode .year-diff { font-size: .86rem; }
       #gameScreen.result-mode .distance-card {
-        padding: 3px 7px;
-        font-size: .76rem;
-        border-radius: 7px;
+        padding: 4px 9px;
+        font-size: .84rem;
+        border-radius: 8px;
       }
       #gameScreen.result-mode .split-map,
       #gameScreen.result-mode .split-image {
         min-height: 0;
         height: auto;
       }
-      #gameScreen.result-mode .split-right-controls { gap: 4px; }
-      #gameScreen.result-mode .split-score-grid { gap: 4px; }
-      #gameScreen.result-mode .score-card { padding: 4px 3px; border-radius: 8px; }
-      #gameScreen.result-mode .score-card span { font-size: .62rem; }
-      #gameScreen.result-mode .score-card strong { font-size: .85rem; }
+      #gameScreen.result-mode .split-right-controls { gap: 6px; }
+      #gameScreen.result-mode .split-score-grid { gap: 6px; }
+      #gameScreen.result-mode .score-card { padding: 6px 5px; border-radius: 10px; }
+      #gameScreen.result-mode .score-card span { font-size: .7rem; }
+      #gameScreen.result-mode .score-card strong { font-size: 1rem; }
       #gameScreen.result-mode .split-next-btn {
-        padding: 7px 9px;
-        font-size: .82rem;
+        padding: 9px 11px;
+        font-size: .9rem;
       }
     }
 
@@ -401,13 +401,18 @@
     <div class="modal-content">
       <div class="modal-close" id="closeRulesModal">✕</div>
       <p style="font-size:1.25rem;font-weight:800;text-align:center;margin-bottom:0.8rem;">📜 Правила игры</p>
-      <ul class="rules-list">
-        <li><span class="rule-bullet"></span><strong>Назначение игры:</strong> определить предполагаемое место съёмки исторической фотографии и указать наиболее вероятный год.</li>
-        <li><span class="rule-bullet"></span><strong>Порядок действий:</strong> выберите точку на карте и установите год при помощи ползунка, затем нажмите «Проверить».</li>
-        <li><span class="rule-bullet"></span><strong>Оценка за местоположение:</strong> максимум 500 баллов при минимальной ошибке; по мере увеличения дистанции количество баллов уменьшается до 0.</li>
-        <li><span class="rule-bullet"></span><strong>Оценка за год:</strong> максимум 500 баллов при точном совпадении; далее начисление снижается пропорционально разнице лет.</li>
-        <li><span class="rule-bullet"></span><strong>Итог раунда:</strong> показываются правильная точка, дистанция ошибки, правильный год, разница лет и суммарные баллы за раунд.</li>
-      </ul>
+      <p style="font-size:.95rem;line-height:1.5;margin-top:.4rem;">
+      HistoryGuesser — это игра на историческую эрудицию и географию. В каждом раунде вам показывается историческая фотография. 
+      Ваша задача — по изображению определить, где была сделана фотография, и в каком году это произошло. 
+      Сначала внимательно рассмотрите снимок, затем переключитесь на карту и щёлкните по предполагаемому месту съёмки. 
+      После этого с помощью ползунка выберите наиболее вероятный год и нажмите кнопку «Проверить». 
+      За точность выбора места вы можете получить до 500 баллов: чем ближе ваша точка к реальному месту, тем больше очков, 
+      при большой ошибке по расстоянию очки за местоположение снижаются до нуля. 
+      За точность указания года также начисляется до 500 баллов: при точном попадании вы получаете максимум, 
+      а при расхождении в годах количество очков уменьшается пропорционально разнице. 
+      После проверки игра показывает правильное место на карте, фактический год съёмки, вашу ошибку по расстоянию и по времени, 
+      а также суммарные баллы за раунд. Набирайте как можно больше очков за серию раундов и сравнивайте свой результат с другими игроками в таблице лидеров.
+      </p>
       <div class="modal-buttons"><button class="modal-btn" id="closeRulesBtn">Понятно</button></div>
     </div>
   </div>
@@ -539,7 +544,7 @@
   <script>
     (() => {
       const FULL_QUESTIONS = [
-        { imageUrl: 'img/red_square.jpg', correctLat: 55.7537, correctLng: 37.6199, correctYear: 1905, description: 'Красная площадь, Москва' },
+        { imageUrl: 'img/red_square.jpg', correctLat: 55.7537, correctLng: 37.6199, correctYear: 1907, description: 'Красная площадь, Москва' },
         { imageUrl: 'img/palatocnii_gorodok.jpg', correctLat: 55.7502, correctLng: 37.6257, correctYear: 1990, description: 'Палаточный городок у гостиницы "Россия"' },
         { imageUrl: 'img/voenii_parad.jpg', correctLat: 59.9385, correctLng: 30.3136, correctYear: 1940, description: 'Военный парад, Ленинград' },
         { imageUrl: 'img/rus_tur_war.jpg', correctLat: 40.7822, correctLng: 43.8252, correctYear: 1877, description: 'Русско-турецкая война. Солдаты и офицеры во время молебна по случаю освобождения Баязета' },
@@ -549,6 +554,7 @@
         { imageUrl: 'img/krestnii_xod.jpg', correctLat: 55.7545, correctLng: 37.6194, correctYear: 1990, description: 'Крестный ход, Москва' },
         { imageUrl: 'img/mogilev.jpg', correctLat: 53.8944, correctLng: 30.3315, correctYear: 1916, description: 'Могилёв. Николай II среди военных представителей союзных держав.' },
         { imageUrl: 'img/1917 miting.jpg', correctLat: 55.7619, correctLng: 37.6104, correctYear: 1917, description: 'Митинг у памятника Михаилу Скобелеву во время революции 1917 года.' },
+        { imageUrl: 'img/xarkov_1925.jpg', correctLat: 49.9933, correctLng: 36.2302, correctYear: 1925, description: 'УССР, Харьков. Велосипедная колонна милиции на фоне Дома правительства ВУЦИК УССР.' },
         { imageUrl: 'img/balaklava.jpg', correctLat: 44.4945, correctLng: 33.5965, correctYear: 1855, description: 'Генуэзская крепость в годы Крымской войны. Балаклава.' },
         { imageUrl: 'img/most_krim.jpg', correctLat: 55.7332, correctLng: 37.6007, correctYear: 1990, description: 'Митинг на Крымском мосту в Москве' },
         { imageUrl: 'img/gorko.jpg', correctLat: 55.7651, correctLng: 37.6043, correctYear: 1941, description: 'Пост ОРУД на улице Горького (ныне Тверская), Москва.' }
@@ -652,7 +658,7 @@
       }
       function savePlayerProfile(profile) { localStorage.setItem(PLAYER_KEY, JSON.stringify(profile)); }
       // ── Supabase ──────────────────────────────────────────────────────────
-      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpseGpzaG9yd3FtbnRqcWFkZ2R6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDAwMDAwMDAsImV4cCI6MjA1MzAwMDAwMH0.placeholder';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpseGpzaG9yd3FtbnRqcWFkZ2R6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNjg0NTcsImV4cCI6MjA5MDY0NDQ1N30.PMkUf1lW6lINc0QBrDrTxe77gZQzMX-p_4OKiyHB7j0';
 
       async function sbFetch(path, options = {}) {
         const res = await fetch(SUPABASE_URL + path, {
@@ -1058,7 +1064,7 @@
         // Запас под системные панели/погрешности, чтобы кнопка всегда оставалась в видимой зоне.
         const reservePx = 14;
         const available = Math.max(0, visibleHeight - fixedHeight - reservePx);
-        const shared = Math.max(40, Math.floor(available / 2));
+        const shared = Math.max(40, Math.floor(available / 0.8));
         splitMapDiv.style.height = `${shared}px`;
         splitImagePane.style.height = `${shared}px`;
       }
