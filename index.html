@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
@@ -99,25 +99,9 @@
     #gameScreen.result-mode .split-container {
       background: #ffffff !important;
     }
-    #gameScreen.result-mode .split-container { padding: 14px !important; }
-    #gameScreen.result-mode .split-columns {
-      gap: 12px !important;
-      grid-template-rows: max-content minmax(90px, .72fr) max-content minmax(90px, .72fr) max-content;
-    }
-    #gameScreen.result-mode .split-answer-block { padding: 18px !important; border-radius: 18px !important; }
-    #gameScreen.result-mode .result-description { font-size: clamp(1.35rem, 2.8vw, 1.8rem) !important; line-height: 1.35 !important; }
-    #gameScreen.result-mode .result-year-row { margin-top: 12px !important; gap: 14px !important; }
-    #gameScreen.result-mode .year-chip { padding: 8px 14px !important; font-size: 1.25rem !important; border-width: 2px !important; }
-    #gameScreen.result-mode .year-diff { font-size: 1.2rem !important; }
-    #gameScreen.result-mode .distance-card { padding: 14px 18px !important; font-size: 1.2rem !important; border-radius: 14px !important; }
-    #gameScreen.result-mode .split-right-controls { gap: 12px !important; }
-    #gameScreen.result-mode .split-score-grid { gap: 10px !important; }
-    #gameScreen.result-mode .score-card { padding: 12px !important; border-radius: 14px !important; }
-    #gameScreen.result-mode .score-card span { font-size: 1rem !important; }
-    #gameScreen.result-mode .score-card strong { font-size: 1.55rem !important; }
-    #gameScreen.result-mode .split-next-btn { padding: 16px 18px !important; font-size: 1.2rem !important; }
 
     @media (min-width: 980px) {
+      /* На ПК только одна колонка — mainArea занимает всё, control-bar снизу */
       .game-layout { grid-template-columns: 1fr; grid-template-rows: 1fr auto; gap: 10px; padding: 8px 14px 14px; }
       .main-area { margin-top: 0; border: 1px solid #dbe3ef; border-radius: 18px; }
       .control-bar {
@@ -127,8 +111,11 @@
       }
       .control-bar .year-slider-area { flex: 1; }
       .control-bar #actionBtn { flex: 0 0 auto; white-space: nowrap; padding: 11px 28px; }
+      /* На ПК roundScoreCards в control-bar скрыты — баллы в splitView */
       .control-bar #roundScoreCards { display: none !important; }
+      /* selector-map-wrap скрыт на ПК — карта встроена в mainArea */
       .selector-map-wrap { display: none !important; }
+      /* В toggleView на ПК: абсолютное позиционирование убираем, flex-row */
       #toggleView { position: absolute !important; inset: 0 !important; display: flex !important; flex-direction: row; }
       #imageView {
         position: relative !important; flex: 1; min-width: 0;
@@ -141,7 +128,9 @@
         width: auto !important; height: auto !important; inset: auto !important;
       }
       #mapView.view-hidden { display: none !important; }
+      /* Скрыть кнопку переключения на ПК */
       #switchViewBtn { display: none !important; }
+      /* infoBlock скрыт на ПК в режиме результата (управляется JS) */
     }
 
     .view, #mapView { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -184,20 +173,20 @@
     .switch-btn.dragging { transition: none; cursor: grabbing; }
 
     .split-container {
-      position: absolute; inset: 0; overflow: hidden; padding: 0;
+      position: absolute; inset: 0; overflow: hidden; padding: 10px;
       background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
     }
     .split-columns {
       display: grid;
       grid-template-rows: auto minmax(130px, 1fr) max-content minmax(120px, 1fr) max-content;
-      gap: 0;
+      gap: 8px;
       max-width: 1100px;
       margin: 0 auto;
       height: 100%;
       min-height: 0;
     }
     .split-answer-block {
-      background: #ffffff; border: none; border-radius: 0; padding: 12px;
+      background: #ffffff; border: none; border-radius: 14px; padding: 12px;
       box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
     }
     .result-description { font-size: clamp(1rem, 2.2vw, 1.2rem); font-weight: 800; color: #0f172a; line-height: 1.35; }
@@ -215,15 +204,15 @@
       color: #334155; font-weight: 700;
     }
     .split-map, .split-image {
-      min-height: 0; border-radius: 0; overflow: hidden; background: #eef2f6; position: relative;
+      min-height: 0; border-radius: 14px; overflow: hidden; background: #eef2f6; position: relative;
       border: none;
     }
     .distance-card {
-      border: none; border-radius: 0; padding: 10px 12px;
+      border: none; border-radius: 12px; padding: 10px 12px;
       font-weight: 800; color: #1e3a8a; text-align: center; background: #eff6ff;
     }
-    .split-right-controls { display: flex; flex-direction: column; gap: 0; }
-    .split-score-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
+    .split-right-controls { display: flex; flex-direction: column; gap: 10px; }
+    .split-score-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
     .split-next-btn { width: 100%; }
 
     .year-slider-area { border: 1px solid #dbe3ef; border-radius: 12px; padding: 10px 12px; background: #f8fafc; }
@@ -303,38 +292,72 @@
     .rank-bronze td:first-child { color: #92400e; }
 
     @media (max-width: 979px) {
-      .game-header { padding: 6px 8px; }
-      .game-title { font-size: .8rem; }
-      .info-block { padding: 6px 8px 0; font-size: .72rem; min-height: 60px; }
+      .game-header { padding: 8px 10px; }
+      .game-title { font-size: 1rem; }
+      .info-block { padding: 8px 10px 0; font-size: .9rem; min-height: 74px; }
       .game-layout { padding-bottom: env(safe-area-inset-bottom); }
-      .main-area { margin-top: 3px; min-height: 42vh; }
-      .control-bar { padding: 6px 6px 8px; }
-      .year-slider-area { padding: 6px 8px; }
-      
-      /* Уменьшаем отступы в сплите */
-      .split-container { padding: 0; gap: 0; }
-      .split-answer-block { padding: 5px 8px; margin-bottom: 0; }
-      .result-description { font-size: .72rem; line-height: 1.1; }
-      .result-year-row { margin-top: 2px; gap: 5px; }
-      .year-chip { padding: 2px 6px; font-size: .64rem; }
-      .year-diff { font-size: .64rem; }
-      .distance-card { padding: 3px 6px; font-size: .6rem; margin: 0; }
-      .split-right-controls { gap: 0; margin-top: 0; }
-      .split-score-grid { gap: 0; }
-      .score-card { padding: 3px 3px; }
-      .score-card span { font-size: .52rem; }
-      .score-card strong { font-size: .68rem; }
-      .split-next-btn { padding: 6px 8px; font-size: .68rem; }
-
-      .split-map, .split-image {
-        min-height: 0;
-        height: auto;
-        flex: 1 1 0;
-      }
+      .main-area { margin-top: 4px; min-height: 52vh; }
+      .control-bar { padding: 8px 8px 10px; }
+      .year-slider-area { padding: 8px 10px; }
+      .split-container { padding: 6px; }
+      .split-answer-block { padding: 8px 10px; }
+      .result-description { font-size: .95rem; line-height: 1.25; }
+      .result-year-row { margin-top: 4px; gap: 6px; }
+      .year-chip { padding: 3px 8px; font-size: .86rem; }
+      .year-diff { font-size: .86rem; }
       .split-columns {
         grid-template-rows: auto minmax(0, 1fr) max-content minmax(0, 1fr) max-content;
-        gap: 0;
+        gap: 4px;
       }
+      .split-map { min-height: 0; }
+      .split-image { min-height: 0; }
+      .distance-card { padding: 4px 8px; font-size: .82rem; line-height: 1.1; border-radius: 8px; }
+      .split-right-controls { gap: 6px; }
+      .split-score-grid { gap: 6px; }
+      .score-card { padding: 5px 4px; }
+      .score-card span { font-size: .68rem; }
+      .score-card strong { font-size: .92rem; }
+      .split-next-btn { padding: 8px 10px; font-size: .88rem; }
+      #gameScreen.result-mode .split-container { padding: 4px; }
+      #gameScreen.result-mode .split-columns {
+        grid-template-rows: max-content min-content max-content min-content max-content;
+        gap: 3px;
+        align-content: start;
+      }
+      #gameScreen.result-mode .split-answer-block { padding: 6px 8px; border-radius: 10px; }
+      #gameScreen.result-mode .result-description { font-size: .88rem; line-height: 1.15; }
+      #gameScreen.result-mode .result-year-row { margin-top: 3px; gap: 5px; }
+      #gameScreen.result-mode .year-chip { padding: 2px 6px; font-size: .8rem; border-width: 1px; }
+      #gameScreen.result-mode .year-diff { font-size: .8rem; }
+      #gameScreen.result-mode .distance-card {
+        padding: 3px 7px;
+        font-size: .76rem;
+        border-radius: 7px;
+      }
+      #gameScreen.result-mode .split-map,
+      #gameScreen.result-mode .split-image {
+        min-height: 0;
+        height: auto;
+      }
+      #gameScreen.result-mode .split-right-controls { gap: 4px; }
+      #gameScreen.result-mode .split-score-grid { gap: 4px; }
+      #gameScreen.result-mode .score-card { padding: 4px 3px; border-radius: 8px; }
+      #gameScreen.result-mode .score-card span { font-size: .62rem; }
+      #gameScreen.result-mode .score-card strong { font-size: .85rem; }
+      #gameScreen.result-mode .split-next-btn {
+        padding: 7px 9px;
+        font-size: .82rem;
+      }
+    }
+
+    /* Desktop result scene */
+    @media (min-width: 980px) {
+      .split-container { padding: 12px; }
+      .split-columns {
+        gap: 10px;
+        grid-template-rows: auto minmax(180px, 1fr) max-content minmax(150px, 1fr) max-content;
+      }
+      .split-right-controls { max-width: 760px; width: 100%; margin: 0 auto; }
     }
 
     .ymaps-copyrights-pane, .ymaps-logo, .ymaps-copyright,
@@ -514,13 +537,6 @@
     (() => {
       const FULL_QUESTIONS = [
         { imageUrl: 'img/red_square.jpg', correctLat: 55.7537, correctLng: 37.6199, correctYear: 1905, description: 'Красная площадь, Москва' },
-        { imageUrl: 'img/palatocnii_gorodok.jpg', correctLat: 55.7502, correctLng: 37.6257, correctYear: 1990, description: 'Палаточный городок у гостиницы "Россия"' },
-        { imageUrl: 'img/voenii_parad.jpg', correctLat: 59.9385, correctLng: 30.3136, correctYear: 1940, description: 'Военный парад, Ленинград' },
-        { imageUrl: 'img/rus_tur_war.jpg', correctLat: 40.7822, correctLng: 43.8252, correctYear: 1877, description: 'Русско-турецкая война. Солдаты и офицеры во время молебна по случаю освобождения Баязета' },
-        { imageUrl: 'img/gagarin.jpg', correctLat: 55.5962, correctLng: 37.2679, correctYear: 1961, description: 'Никита Хрущев, Герман Титов, Юрий Гагарин, Михаил Суслов и Леонид Брежнев в аэропорту Внуково' },
-        { imageUrl: 'img/krim.jpg', correctLat: 44.9520, correctLng: 34.0971, correctYear: 2014, description: '"Крымская весна". У здания Верховной Рады' },
-        { imageUrl: 'img/spb_1914.jpg', correctLat: 59.9081, correctLng: 30.3073, correctYear: 1914, description: 'Выгрузка почтовой корреспонденции' },
-        { imageUrl: 'img/krestnii_xod.jpg', correctLat: 55.7545, correctLng: 37.6194, correctYear: 1990, description: 'Крестный ход, Москва' },
         { imageUrl: 'img/mogilev.jpg', correctLat: 53.8944, correctLng: 30.3315, correctYear: 1916, description: 'Могилёв. Николай II среди военных представителей союзных держав.' },
         { imageUrl: 'img/1917 miting.jpg', correctLat: 55.7619, correctLng: 37.6104, correctYear: 1917, description: 'Митинг у памятника Михаилу Скобелеву во время революции 1917 года.' },
         { imageUrl: 'img/balaklava.jpg', correctLat: 45.0237, correctLng: 35.4031, correctYear: 1855, description: 'Генуэзская крепость в годы Крымской войны. Балаклава.' },
@@ -656,11 +672,13 @@
           points: Math.floor(points),
           created_at: new Date().toISOString()
         };
+        // Сохраняем локально всегда (резервная копия)
         try {
           const list = JSON.parse(localStorage.getItem(LEADERBOARD_KEY) || '[]');
           list.push({ ...entry, group: entry.grp });
           localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(list));
         } catch {}
+        // Пробуем отправить в Supabase
         try {
           await sbFetch('/rest/v1/leaderboard', {
             method: 'POST',
@@ -673,14 +691,17 @@
       }
 
       async function loadLeaderboardData() {
+        // Сначала пробуем Supabase
         try {
           const rows = await sbFetch('/rest/v1/leaderboard?select=*&order=points.desc&limit=500');
           if (Array.isArray(rows)) {
+            // Нормализуем поле group (в БД может быть grp)
             return rows.map(r => ({ ...r, group: r.grp || r.group || '—' }));
           }
         } catch (e) {
           console.warn('Supabase read failed, используются локальные данные:', e.message);
         }
+        // Фоллбэк — локальное хранилище
         try { return JSON.parse(localStorage.getItem(LEADERBOARD_KEY) || '[]'); } catch { return []; }
       }
 
@@ -690,6 +711,7 @@
         const course = lbCourseFilter.value.trim();
         const group = lbGroupFilter.value.trim().toLowerCase();
 
+        // Показываем нужные фильтры
         lbOrgFilter.classList.toggle('hidden', type !== 'org' && type !== 'course' && type !== 'group');
         lbCourseFilter.classList.toggle('hidden', type !== 'course');
         lbGroupFilter.classList.toggle('hidden', type !== 'group');
@@ -763,6 +785,7 @@
         const yearDiff = Math.abs(userYear - correctYear);
         const pointsYear = Math.max(0, 500 - yearDiff * 10);
 
+        // Distance scoring: 150м→500, 100км→350, 250км→250, 500км→100, 1000км→50, 2500км→0
         let pointsDist = 0;
         if (distKm <= 0.15) {
           pointsDist = 500;
@@ -989,10 +1012,10 @@
         const styles = getComputedStyle(splitColumns);
         const gap = parseFloat(styles.rowGap || styles.gap || '0') || 0;
         const fixedHeight = splitAnswerBlock.offsetHeight + distanceCard.offsetHeight + splitRightControls.offsetHeight + gap * 4;
-        const reservePx = 10;
+        // Запас под системные панели/погрешности, чтобы кнопка всегда оставалась в видимой зоне.
+        const reservePx = 14;
         const available = Math.max(0, visibleHeight - fixedHeight - reservePx);
-        // Отдаём 95% доступной высоты карте и изображению (раньше было 72%)
-        const shared = Math.max(36, Math.floor((available / 2) * 0.95));
+        const shared = Math.max(40, Math.floor(available / 2));
         splitMapDiv.style.height = `${shared}px`;
         splitImagePane.style.height = `${shared}px`;
       }
@@ -1016,7 +1039,7 @@
       function isDesktop() { return window.innerWidth >= 980; }
 
       function switchView() {
-        if (isDesktop()) return;
+        if (isDesktop()) return; // На ПК переключение не нужно — карта всегда видна
         if (currentView === 'image') {
           currentView = 'map';
           mapView.classList.remove('view-hidden');
@@ -1054,6 +1077,7 @@
         infoBlock.classList.remove('compact');
         infoBlock.style.display = '';
 
+        // На ПК карта всегда видна рядом с фото
         if (isDesktop()) {
           mapView.classList.remove('view-hidden');
           imageView.classList.remove('view-hidden');
@@ -1105,9 +1129,11 @@
         actionBtn.style.display = 'none';
         roundScoreCards.classList.add('hidden');
 
+        // В сцене результата скрываем infoBlock на всех устройствах
         infoBlock.style.display = 'none';
 
         distanceCard.textContent = `Расстояние: ${res.distKm.toFixed(1)} км`;
+        // Только splitView карточки — roundScoreCards в control-bar скрыты на ПК в результате
         splitDistancePoints.textContent = res.pointsDist;
         splitYearPoints.textContent = res.pointsYear;
         splitRoundPoints.textContent = res.total;
@@ -1226,6 +1252,7 @@
           saveGameState();
         }
 
+        // На ПК карта всегда видна рядом с фото
         if (isDesktop()) {
           mapView.classList.remove('view-hidden');
           imageView.classList.remove('view-hidden');
@@ -1399,11 +1426,13 @@
         byId('menuScreen').classList.remove('hidden');
       });
 
+      // Tab switching
       document.querySelectorAll('.lb-tab').forEach(tab => {
         tab.addEventListener('click', () => {
           document.querySelectorAll('.lb-tab').forEach(t => t.classList.remove('active'));
           tab.classList.add('active');
           lbActiveTab = tab.dataset.tab;
+          // Reset filters
           lbOrgFilter.value = '';
           lbCourseFilter.value = '';
           lbGroupFilter.value = '';
