@@ -1064,7 +1064,7 @@
         // Запас под системные панели/погрешности, чтобы кнопка всегда оставалась в видимой зоне.
         const reservePx = 14;
         const available = Math.max(0, visibleHeight - fixedHeight - reservePx);
-        const shared = Math.max(40, Math.floor(available * 0.8));
+        const shared = Math.max(40, Math.floor(available * 0.4));
         splitMapDiv.style.height = `${shared}px`;
         splitImagePane.style.height = `${shared}px`;
       }
