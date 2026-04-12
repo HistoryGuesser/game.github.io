@@ -186,11 +186,14 @@
       min-height: 0;
     }
     .split-answer-block {
-      background: #ffffff; border: none; border-radius: 14px; padding: 12px;
-      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 0;
+      box-shadow: none;
     }
     .result-description { font-size: clamp(1rem, 2.2vw, 1.2rem); font-weight: 800; color: #0f172a; line-height: 1.35; }
-    .result-year-row { margin-top: 9px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .result-year-row { margin-top: 4px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
     .year-chip {
       border: 2px solid #1e3a8a;
       border-radius: 10px;
@@ -299,7 +302,7 @@
       .main-area { margin-top: 4px; min-height: 52vh; }
       .control-bar { padding: 8px 8px 10px; }
       .year-slider-area { padding: 8px 10px; }
-      .split-container { padding: 6px; }
+      .split-container { padding: 6px 0; }
       .split-answer-block { padding: 8px 10px; }
       .result-description { font-size: .95rem; line-height: 1.25; }
       .result-year-row { margin-top: 4px; gap: 6px; }
@@ -318,7 +321,7 @@
       .score-card span { font-size: .68rem; }
       .score-card strong { font-size: .92rem; }
       .split-next-btn { padding: 8px 10px; font-size: .88rem; }
-      #gameScreen.result-mode .split-container { padding: 4px; }
+      #gameScreen.result-mode .split-container { padding: 4px 0; }
       #gameScreen.result-mode .split-columns {
         grid-template-rows: max-content min-content max-content min-content max-content;
         gap: 3px;
@@ -490,7 +493,7 @@
             <div id="splitAnswerBlock" class="split-answer-block">
               <div id="splitAnswerDescription" class="result-description">—</div>
               <div class="result-year-row">
-                <span class="year-chip">Правильный год: <span id="splitCorrectYear">—</span></span>
+                <span class="year-chip" id="splitCorrectYear">—</span>
                 <span class="year-diff">Разница: <span id="splitYearDiff">—</span> лет</span>
               </div>
             </div>
@@ -546,7 +549,7 @@
         { imageUrl: 'img/krestnii_xod.jpg', correctLat: 55.7545, correctLng: 37.6194, correctYear: 1990, description: 'Крестный ход, Москва' },
         { imageUrl: 'img/mogilev.jpg', correctLat: 53.8944, correctLng: 30.3315, correctYear: 1916, description: 'Могилёв. Николай II среди военных представителей союзных держав.' },
         { imageUrl: 'img/1917 miting.jpg', correctLat: 55.7619, correctLng: 37.6104, correctYear: 1917, description: 'Митинг у памятника Михаилу Скобелеву во время революции 1917 года.' },
-        { imageUrl: 'img/balaklava.jpg', correctLat: 45.0237, correctLng: 35.4031, correctYear: 1855, description: 'Генуэзская крепость в годы Крымской войны. Балаклава.' },
+        { imageUrl: 'img/balaklava.jpg', correctLat: 44.4945, correctLng: 33.5965, correctYear: 1855, description: 'Генуэзская крепость в годы Крымской войны. Балаклава.' },
         { imageUrl: 'img/most_krim.jpg', correctLat: 55.7332, correctLng: 37.6007, correctYear: 1990, description: 'Митинг на Крымском мосту в Москве' },
         { imageUrl: 'img/gorko.jpg', correctLat: 55.7651, correctLng: 37.6043, correctYear: 1941, description: 'Пост ОРУД на улице Горького (ныне Тверская), Москва.' }
       ];
@@ -829,11 +832,17 @@
         return new Promise((resolve) => {
           const boot = () => {
             map = new ymaps.Map('mapView', {
-              center: [55.7537, 37.6199], zoom: 6, controls: ['zoomControl']
+              center: [55, 37], // was [55.7537, 37.6199]
+              zoom: 6,          // was 6
+              controls: ['zoomControl']
             }, {
-              suppressMapOpenBlock: true, yandexMapDisablePoiInteractivity: true
+              suppressMapOpenBlock: true,
+              yandexMapDisablePoiInteractivity: true
             });
-            map.options.set('restrictMapArea', [[41, 19], [82, 190]]);
+
+      // расширенный лимит карты: вся Евразия
+            map.options.set('restrictMapArea', [[10, -10], [82, 190]]); // was [[41, 19], [82, 190]]
+
             map.events.add('click', (e) => applyUserSelection(e.get('coords')));
             hideCopyrights();
             resolve();
@@ -859,18 +868,26 @@
 
       async function initSelectorMap() {
         if (window.innerWidth < 980 || !window.ymaps) return;
-        return new Promise((resolve) => {
-          ymaps.ready(() => {
-            if (selectorMap) selectorMap.destroy();
-            selectorMap = new ymaps.Map(selectorMapDiv, { center: [55.7537, 37.6199], zoom: 4, controls: [] }, {
-              suppressMapOpenBlock: true, yandexMapDisablePoiInteractivity: true
+          return new Promise((resolve) => {
+            ymaps.ready(() => {
+              if (selectorMap) selectorMap.destroy();
+              selectorMap = new ymaps.Map(selectorMapDiv, {
+                center: [55, 37], // was [55.7537, 37.6199]
+                zoom: 4,          // was 4
+                controls: []
+              }, {
+                suppressMapOpenBlock: true,
+                yandexMapDisablePoiInteractivity: true
+              });
+
+      // расширенный лимит карты: вся Евразия
+              selectorMap.options.set('restrictMapArea', [[10, -10], [82, 190]]); // was [[41, 19], [82, 190]]
+
+              selectorMap.events.add('click', (e) => applyUserSelection(e.get('coords')));
+              hideCopyrights();
+              resolve();
             });
-            selectorMap.options.set('restrictMapArea', [[41, 19], [82, 190]]);
-            selectorMap.events.add('click', (e) => applyUserSelection(e.get('coords')));
-            hideCopyrights();
-            resolve();
           });
-        });
       }
 
       async function initSplitMap() {
@@ -878,18 +895,37 @@
         return new Promise((resolve) => {
           ymaps.ready(() => {
             if (splitMap) splitMap.destroy();
-            splitMap = new ymaps.Map(splitMapDiv, { center: [55.7537, 37.6199], zoom: 6, controls: ['zoomControl'] }, {
-              suppressMapOpenBlock: true, yandexMapDisablePoiInteractivity: true
+            splitMap = new ymaps.Map(splitMapDiv, {
+              center: [55, 37], // was [55.7537, 37.6199]
+              zoom: 6,          // was 6
+              controls: ['zoomControl']
+            }, {
+              suppressMapOpenBlock: true,
+              yandexMapDisablePoiInteractivity: true
             });
-            splitMap.options.set('restrictMapArea', [[41, 19], [82, 190]]);
+
+      // расширенный лимит карты: вся Евразия
+            splitMap.options.set('restrictMapArea', [[10, -10], [82, 190]]); // was [[41, 19], [82, 190]]
 
             if (selectedLat != null && selectedLng != null) {
-              splitMap.geoObjects.add(new ymaps.Placemark([selectedLat, selectedLng], { hintContent: 'Ваш выбор' }, { preset: 'islands#blueCircleIcon' }));
+              splitMap.geoObjects.add(new ymaps.Placemark(
+                [selectedLat, selectedLng],
+                { hintContent: 'Ваш выбор' },
+                { preset: 'islands#blueCircleIcon' }
+              ));
             }
             const q = currentQuestions[currentIndex];
-            splitMap.geoObjects.add(new ymaps.Placemark([q.correctLat, q.correctLng], { hintContent: 'Правильное место' }, { preset: 'islands#greenCircleIcon' }));
+            splitMap.geoObjects.add(new ymaps.Placemark(
+              [q.correctLat, q.correctLng],
+              { hintContent: 'Правильное место' },
+              { preset: 'islands#greenCircleIcon' }
+            ));
             if (selectedLat != null && selectedLng != null) {
-              splitMap.geoObjects.add(new ymaps.Polyline([[selectedLat, selectedLng], [q.correctLat, q.correctLng]], {}, { strokeColor: '#1e3a8a', strokeWidth: 3, strokeStyle: 'dash' }));
+              splitMap.geoObjects.add(new ymaps.Polyline(
+                [[selectedLat, selectedLng], [q.correctLat, q.correctLng]],
+                {},
+                { strokeColor: '#1e3a8a', strokeWidth: 3, strokeStyle: 'dash' }
+              ));
               const bounds = ymaps.util.bounds.fromPoints([[selectedLat, selectedLng], [q.correctLat, q.correctLng]]);
               splitMap.setBounds(bounds, { checkZoomRange: true, zoomMargin: 70 });
             }
@@ -1146,7 +1182,7 @@
         splitRoundPoints.textContent = res.total;
 
         byId('splitAnswerDescription').textContent = q.description;
-        byId('splitCorrectYear').textContent = q.correctYear;
+        byId('splitCorrectYear').textContent = q.correctYear + ' г.';
         byId('splitYearDiff').textContent = res.yearDiff;
 
         splitHistoricalImage.src = historicalImg.src;
