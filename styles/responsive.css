@@ -1,0 +1,100 @@
+@media (min-width: 980px) {
+      /* На ПК только одна колонка — mainArea занимает всё, control-bar снизу */
+      .game-layout { grid-template-columns: 1fr; grid-template-rows: 1fr auto; gap: 10px; padding: 8px 14px 14px; }
+      .main-area { margin-top: 0; border: 1px solid #dbe3ef; border-radius: 18px; }
+      .control-bar {
+        margin-top: 0; border: 1px solid #dbe3ef; border-radius: 14px;
+        background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+        padding: 12px 14px; flex-direction: row; align-items: center; gap: 14px;
+      }
+      .control-bar .year-slider-area { flex: 1; }
+      .control-bar #actionBtn { flex: 0 0 auto; white-space: nowrap; padding: 11px 28px; }
+      /* На ПК roundScoreCards в control-bar скрыты — баллы в splitView */
+      .control-bar #roundScoreCards { display: none !important; }
+      /* selector-map-wrap скрыт на ПК — карта встроена в mainArea */
+      .selector-map-wrap { display: none !important; }
+      /* В toggleView на ПК: абсолютное позиционирование убираем, flex-row */
+      #toggleView { position: absolute !important; inset: 0 !important; display: flex !important; flex-direction: row; }
+      #imageView {
+        position: relative !important; flex: 1; min-width: 0;
+        opacity: 1 !important; pointer-events: auto !important;
+      }
+      #mapView {
+        position: relative !important; flex: 0 0 45%; min-width: 0;
+        border-left: 1px solid #dbe3ef; border-radius: 0 18px 18px 0;
+        opacity: 1 !important; pointer-events: auto !important;
+        width: auto !important; height: auto !important; inset: auto !important;
+      }
+      #mapView.view-hidden { display: none !important; }
+      /* Скрыть кнопку переключения на ПК */
+      #switchViewBtn { display: none !important; }
+      /* infoBlock скрыт на ПК в режиме результата (управляется JS) */
+    }
+
+@media (max-width: 979px) {
+      .game-header { padding: 8px 10px; }
+      .game-title { font-size: 1rem; }
+      .info-block { padding: 8px 10px 0; font-size: .9rem; min-height: 74px; }
+      .game-layout { padding-bottom: env(safe-area-inset-bottom); }
+      .main-area { margin-top: 4px; min-height: 52vh; }
+      .control-bar { padding: 8px 8px 10px; }
+      .year-slider-area { padding: 8px 10px; }
+      .split-container { padding: 6px 0; }
+      .split-answer-block { padding: 8px 10px; }
+      .result-description { font-size: .95rem; line-height: 1.25; }
+      .result-year-row { margin-top: 4px; gap: 6px; }
+      .year-chip { padding: 3px 8px; font-size: .86rem; }
+      .year-diff { font-size: .86rem; }
+      .split-columns {
+        grid-template-rows: auto minmax(0, 1fr) max-content minmax(0, 1fr) max-content;
+        gap: 4px;
+      }
+      .split-map { min-height: 0; }
+      .split-image { min-height: 0; }
+      .distance-card { padding: 4px 8px; font-size: .82rem; line-height: 1.1; border-radius: 8px; }
+      .split-right-controls { gap: 6px; }
+      .split-score-grid { gap: 6px; }
+      .score-card { padding: 5px 4px; }
+      .score-card span { font-size: .68rem; }
+      .score-card strong { font-size: .92rem; }
+      .split-next-btn { padding: 8px 10px; font-size: .88rem; }
+      #gameScreen.result-mode .split-container { padding: 6px 0; }
+      #gameScreen.result-mode .split-columns {
+        grid-template-rows: max-content min-content max-content min-content max-content;
+        gap: 4px;
+        align-content: start;
+      }
+      #gameScreen.result-mode .split-answer-block { padding: 10px 12px; border-radius: 14px; }
+      #gameScreen.result-mode .result-description { font-size: .95rem; line-height: 1.2; }
+      #gameScreen.result-mode .result-year-row { margin-top: 4px; gap: 6px; }
+      #gameScreen.result-mode .year-chip { padding: 4px 10px; font-size: .9rem; border-width: 1px; }
+      #gameScreen.result-mode .year-diff { font-size: .9rem; }
+      #gameScreen.result-mode .distance-card {
+        padding: px 12px;
+        font-size: .95rem;
+        border-radius: 12px;
+      }
+      #gameScreen.result-mode .split-map,
+      #gameScreen.result-mode .split-image {
+        min-height: 0;
+        height: auto;
+      }
+      #gameScreen.result-mode .split-right-controls { gap: 10px; }
+      #gameScreen.result-mode .split-score-grid { gap: 10px; }
+      #gameScreen.result-mode .score-card { padding: 10px 9px; border-radius: 18px; }
+      #gameScreen.result-mode .score-card span { font-size: .9rem; }
+      #gameScreen.result-mode .score-card strong { font-size: 1.2rem; }
+      #gameScreen.result-mode .split-next-btn {
+        padding: 10px 12px;
+        font-size: .95rem;
+      }
+    }
+
+@media (min-width: 980px) {
+      .split-container { padding: 12px; }
+      .split-columns {
+        gap: 10px;
+        grid-template-rows: auto minmax(180px, 1fr) max-content minmax(150px, 1fr) max-content;
+      }
+      .split-right-controls { max-width: 760px; width: 100%; margin: 0 auto; }
+    }

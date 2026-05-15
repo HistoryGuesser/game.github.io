@@ -1,0 +1,40 @@
+
+
+    .game-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; border-bottom: 1px solid #dbe3ef;
+    }
+
+
+    .game-title {
+      font-weight: 800; font-size: 1.25rem;
+      background: linear-gradient(135deg, #1e3a8a, #0f1f4a);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+
+
+
+    .game-layout {
+      flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr;
+      padding: 0 0 max(10px, env(safe-area-inset-bottom));
+      overflow: hidden;
+    }
+
+
+    .image-wrapper {
+      position: absolute; inset: 0; overflow: hidden; touch-action: none;
+      background: radial-gradient(circle at center, #1f2937 0%, #0f172a 100%);
+      cursor: grab;
+    }
+
+
+    .historical-img {
+      position: absolute; top: 0; left: 0; max-width: none; pointer-events: none;
+      transform-origin: 0 0; will-change: transform;
+    }
+
+
+    .historical-bg { opacity: .35; filter: brightness(.7) saturate(.9) blur(.7px); }
+
+
+    .image-overlay { position: absolute; inset: 0; background: rgba(0,0,0,.12); pointer-events: none; }

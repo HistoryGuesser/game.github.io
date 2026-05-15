@@ -1,0 +1,17 @@
+
+    .leaderboard-btn {
+      position: absolute; top: 16px; left: 16px; width: 42px; height: 42px;
+      border-radius: 50%; background: #1e3a8a; color: #fff; display: grid; place-items: center;
+      font-size: 1.1rem; font-weight: 800; cursor: pointer;
+    }
+
+
+    .leaderboard-screen {
+      padding: 0; gap: 0; background: #f1f5f9; overflow: hidden;
+    }
+
+
+    .leaderboard-table-wrap {
+      flex: 1; overflow: auto; background: #fff; margin: 10px 12px 12px;
+      border: 1px solid #dbe3ef; border-radius: 14px;
+    }
